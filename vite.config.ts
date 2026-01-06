@@ -17,12 +17,13 @@ export default defineConfig({
     },
   },
 
-// server: {
-//   proxy: {
-//     "/api": {
-//       target: "ip address", //if we proxy api then we can use this
-//       changeOrigin: true,
-//       secure: false,
-//     },
-//   },
-// }
+  server: {
+    proxy: {
+      "/api": {
+        target: "ip address", //if we proxy api then we can use this
+        changeOrigin: true,
+        secure: false,
+      },
+    },
+  },
+})
