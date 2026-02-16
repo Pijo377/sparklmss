@@ -19,7 +19,7 @@ export default function DashboardLayout() {
     }
   };
 
-  const handleClose = () => {
+  const handleClose = () => { 
     if (setIsSidebarOpen) {
       setIsSidebarOpen(false);
     }
@@ -50,14 +50,14 @@ export default function DashboardLayout() {
           onClose={handleClose}
           screen="dashboard"
           onExpand={expandSidebar}
-          navigationItems={dashboardNavigationItems}
-          hasSubMenus={false}
+          navigationItems={dashboardNavigationItems} 
+          hasSubMenus={true}
         />
       </div>
 
       {/* Content Area */}
       <main className="flex-1 overflow-y-auto overflow-x-hidden bg-slate-50">
-        <div className="p-6">
+        <div className="p-4">
           <Outlet />
         </div>
       </main>

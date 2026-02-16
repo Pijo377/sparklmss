@@ -214,7 +214,7 @@ export default function AppSidebar({
         {shouldShowSubmenu &&
           displayMenuItem?.subMenus &&
           typeof window !== "undefined" &&
-          createPortal(
+          createPortal( 
             <aside
               style={{
                 top: submenuTop,
