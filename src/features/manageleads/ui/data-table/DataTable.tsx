@@ -46,6 +46,7 @@ export function DataTable<T extends Record<string, any>>({
   onRowSelectionChange,
   enableExport = false,
   onExport,
+  toolbarButtons = [],
   stableHeight = false,
   stickyActions = true,
   enablePagination = true,
@@ -120,6 +121,7 @@ export function DataTable<T extends Record<string, any>>({
         onGlobalFilterChange={tableState.setGlobalFilter}
         enableExport={enableExport}
         onExport={onExport}
+        toolbarButtons={toolbarButtons}
       />
 
       {/* Table */}
@@ -194,8 +196,33 @@ export function DataTable<T extends Record<string, any>>({
  *   disableAutoSize={false}                   // Optional: Disable auto-sizing (default: false)
  *   enableRowSelection={true}                 // Optional: Enable row selection (default: false)
  *   onRowSelectionChange={setSelectedRows}    // Optional: Row selection callback
- *   enableExport={true}                       // Optional: Enable export button (default: false)
- *   onExport={handleExport}                   // Optional: Export callback
+ *   enableExport={true}                       // Optional: Enable export button - DEPRECATED, use toolbarButtons
+ *   onExport={handleExport}                   // Optional: Export callback - DEPRECATED, use toolbarButtons
+ *   toolbarButtons={[                         // Optional: Toolbar buttons (top-right of table)
+ *     {
+ *       icon: <ThumbsUp />,                   // Required: Button icon
+ *       label: "Select All",                  // Required: Button label
+ *       onClick: handleSelectAll,             // Required: Click handler
+ *       variant: "default",                   // Optional: Button variant (default: "default")
+ *       className: "bg-green-600 hover:bg-green-700", // Optional: Custom styling
+ *       hide: false,                          // Optional: Conditional hide
+ *       disabled: false                       // Optional: Disabled state
+ *     },
+ *     {
+ *       icon: <RotateCcw />,
+ *       label: "Reset All",
+ *       onClick: handleResetAll,
+ *       variant: "outline",
+ *       className: "border-red-500 text-red-600"
+ *     },
+ *     {
+ *       icon: <FileDown />,
+ *       label: "Export",
+ *       onClick: handleExport,
+ *       variant: "outline",
+ *       className: "border-blue-600 text-blue-600"
+ *     }
+ *   ]}
  * />
  * 
  * // Column Definition Examples

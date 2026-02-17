@@ -240,12 +240,12 @@ function EditSheetForm<T extends Record<string, unknown>>({
     // Find the field definition to check for formatter
     const field = fields.find(f => f.key === key);
     let formattedValue = value;
-    
+
     // Apply formatter if it exists and value is a string (text input)
     if (field?.format && typeof value === "string") {
       formattedValue = field.format(value);
     }
-    
+
     setFormData((prev) => {
       const next = { ...prev, [key]: formattedValue } as T;
       if (showValidation) setErrors(validateAll(next));
@@ -476,7 +476,7 @@ function EditSheetForm<T extends Record<string, unknown>>({
             {saveButtonIcon ||
               (mode === "add" ? <Plus size={16} className="mr-1 sm:mr-2" /> : null)}
             <span className="truncate">
-              {saveButtonText || (mode === "add" ? "Add Notes" : "Save Changes")}
+              {saveButtonText || (mode === "add" ? "Add " : "Save Changes")}
             </span>
           </Button>
 

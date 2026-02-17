@@ -21,23 +21,23 @@ const digitsOnly = (value: unknown) =>
 
 const compose =
   (...validators: PortfolioFieldValidator[]): PortfolioFieldValidator =>
-  (value, data) => {
-    for (const v of validators) {
-      const result = v(value, data);
-      if (result) return result;
-    }
-    return null;
-  };
+    (value, data) => {
+      for (const v of validators) {
+        const result = v(value, data);
+        if (result) return result;
+      }
+      return null;
+    };
 
 /* -------------------- Formatters -------------------- */
 
 export const formatPhoneNumber = (value: string): string => {
   const digits = digitsOnly(value);
-  
+
   if (digits.length === 0) return "";
   if (digits.length <= 3) return digits;
   if (digits.length <= 6) return `(${digits.slice(0, 3)})-${digits.slice(3)}`;
-  
+
   return `(${digits.slice(0, 3)})-${digits.slice(3, 6)}-${digits.slice(6, 10)}`;
 };
 
@@ -45,60 +45,60 @@ export const formatPhoneNumber = (value: string): string => {
 
 const required =
   (label: string): PortfolioFieldValidator =>
-  (value) =>
-    isBlank(value) ? `${label} is required.` : null;
+    (value) =>
+      isBlank(value) ? `${label} is required.` : null;
 
 const email =
   (label: string): PortfolioFieldValidator =>
-  (value) => {
-    const v = String(value ?? "").trim();
-    const isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
-    return isValid ? null : `${label} must be a valid email address.`;
-  };
+    (value) => {
+      const v = String(value ?? "").trim();
+      const isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+      return isValid ? null : `${label} must be a valid email address.`;
+    };
 
 const phone10 =
   (label: string): PortfolioFieldValidator =>
-  (value) => {
-    const digits = digitsOnly(value);
-    if (digits.length !== 10)
-      return `${label} must be a 10 digit number.`;
-    return null;
-  };
+    (value) => {
+      const digits = digitsOnly(value);
+      if (digits.length !== 10)
+        return `${label} must be a 10 digit number.`;
+      return null;
+    };
 
 const zipUS =
   (label: string): PortfolioFieldValidator =>
-  (value) => {
-    const v = String(value ?? "").trim();
-    const isValid =
-      /^\d{5}$/.test(v) ||
-      /^\d{9}$/.test(v) ||
-      /^\d{5}-\d{4}$/.test(v);
-    return isValid
-      ? null
-      : `${label} must be 5 digits (or 9 digits / 5-4).`;
-  };
+    (value) => {
+      const v = String(value ?? "").trim();
+      const isValid =
+        /^\d{5}$/.test(v) ||
+        /^\d{9}$/.test(v) ||
+        /^\d{5}-\d{4}$/.test(v);
+      return isValid
+        ? null
+        : `${label} must be 5 digits (or 9 digits / 5-4).`;
+    };
 
 const integerRange =
   (label: string, min: number, max: number): PortfolioFieldValidator =>
-  (value) => {
-    const num =
-      typeof value === "number" ? value : Number(value);
+    (value) => {
+      const num =
+        typeof value === "number" ? value : Number(value);
 
-    if (!Number.isFinite(num) || !Number.isInteger(num))
-      return `${label} must be a whole number.`;
+      if (!Number.isFinite(num) || !Number.isInteger(num))
+        return `${label} must be a whole number.`;
 
-    if (num < min || num > max)
-      return `${label} must be between ${min} and ${max}.`;
+      if (num < min || num > max)
+        return `${label} must be between ${min} and ${max}.`;
 
-    return null;
-  };
+      return null;
+    };
 
 const requiredSelect =
   (label: string): PortfolioFieldValidator =>
-  (value) =>
-    String(value ?? "").trim() === ""
-      ? `${label} is required.`
-      : null;
+    (value) =>
+      String(value ?? "").trim() === ""
+        ? `${label} is required.`
+        : null;
 
 /* -------------------- Portfolio Validators -------------------- */
 

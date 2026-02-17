@@ -1,5 +1,7 @@
 import { IoSearch } from "react-icons/io5";
 import { FileDown } from "lucide-react";
+import { Button } from "@/shared/components/ui/button";
+import type { ToolbarButtonDef } from "../types";
 
 interface TableHeaderProps {
   title?: string;
@@ -8,10 +10,11 @@ interface TableHeaderProps {
   onGlobalFilterChange: (value: string) => void;
   enableExport?: boolean;
   onExport?: () => void;
+  toolbarButtons?: ToolbarButtonDef[];
 }
 
 /**
- * Table header with title, global search, and export
+ * Table header with title, global search, and toolbar buttons
  */
 export function TableHeader({
   title,
@@ -20,8 +23,21 @@ export function TableHeader({
   onGlobalFilterChange,
   enableExport = false,
   onExport,
+  toolbarButtons = [],
 }: TableHeaderProps) {
-  if (!title && !enableGlobalSearch && !enableExport) return null;
+  // Backward compatibility: Add export button if enableExport is true
+  const buttons: ToolbarButtonDef[] = [...toolbarButtons];
+  if (enableExport && onExport) {
+    buttons.push({
+      icon: <FileDown className="w-4 h-4" />,
+      label: "Export",
+      onClick: onExport,
+      variant: "outline",
+      className: "border-blue-600 text-blue-600 hover:bg-blue-50",
+    });
+  }
+
+  if (!title && !enableGlobalSearch && buttons.length === 0) return null;
 
   return (
     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
@@ -39,21 +55,28 @@ export function TableHeader({
         </div>
       )}
 
-      {/* Right: Title and Export */}
-      <div className="flex items-center gap-3">
-        {/* {title && <h2 className="text-lg sm:text-xl font-semibold">{title}</h2>} */}
-
-        {enableExport && (
-          <button
-            onClick={onExport}
-            className="inline-flex items-center gap-2 h-8 px-3 text-sm font-medium rounded-md border border-blue-600 text-blue-600 bg-background hover:bg-blue-50 transition-colors"
-            aria-label="Export to CSV"
-          >
-            <FileDown className="w-4 h-4" />
-            Export
-          </button>
-        )}
-      </div>
+      {/* Right: Toolbar Buttons */}
+      {buttons.length > 0 && (
+        <div className="flex items-center gap-3">
+          {buttons.map((button, index) => {
+            if (button.hide) return null;
+            
+            return (
+              <Button
+                key={index}
+                onClick={button.onClick}
+                disabled={button.disabled}
+                variant={button.variant || "default"}
+                size="sm"
+                className={button.className}
+              >
+                {button.icon}
+                <span className="ml-2">{button.label}</span>
+              </Button>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }

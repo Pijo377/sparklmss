@@ -1,5 +1,13 @@
 import type { ColumnSizingState, OnChangeFn } from "@tanstack/react-table";
 
+// Extend TanStack Table's ColumnMeta to include our custom properties
+declare module "@tanstack/react-table" {
+  interface ColumnMeta<TData, TValue> {
+    pinned?: "left" | "right";
+    sticky?: boolean;
+  }
+}
+
 /**
  * Column definition for DataTable
  */
@@ -24,10 +32,12 @@ export interface ColumnDef<T> {
   visible?: boolean;
   /** Make cell clickable with green color - navigates to customer details */
   clickable?: boolean;
+  /** Pin column to left or right side */
+  pinned?: "left" | "right";
 }
 
 /**
- * Action button definition
+ * Action button definition (for row-level actions)
  */
 export interface ActionDef<T> {
   /** Icon component */
@@ -41,6 +51,26 @@ export interface ActionDef<T> {
 }
 
 /**
+ * Toolbar button definition (for table-level actions)
+ */
+export interface ToolbarButtonDef {
+  /** Icon component */
+  icon: React.ReactNode;
+  /** Button label text */
+  label: string;
+  /** Click handler */
+  onClick: () => void;
+  /** Button variant (default: "default") */
+  variant?: "default" | "outline" | "ghost" | "destructive" | "secondary";
+  /** Custom className for styling */
+  className?: string;
+  /** Conditional hide */
+  hide?: boolean;
+  /** Disabled state */
+  disabled?: boolean;
+}
+
+/**
  * DataTable props
  */
 export interface DataTableProps<T> {
@@ -48,12 +78,11 @@ export interface DataTableProps<T> {
   data: T[];
   /** Column definitions */
   columns: ColumnDef<T>[];
-  /** Actions config - can be static array, dynamic function per row, or custom render */
+  /** Actions config - can be static array or dynamic function per row */
   actions?: {
     header?: string;
     width?: string;
-    items?: ActionDef<T>[] | ((row: T) => ActionDef<T>[]);
-    render?: (row: T) => React.ReactNode;
+    items: ActionDef<T>[] | ((row: T) => ActionDef<T>[]);
   };
   stableHeight?: boolean;
   /** Enable sticky Actions column on the right (default: false) */
@@ -84,8 +113,10 @@ export interface DataTableProps<T> {
   enableRowSelection?: boolean;
   /** Callback when row selection changes */
   onRowSelectionChange?: (selectedRows: T[]) => void;
-  /** Enable export button (default: false) */
+  /** Enable export button (default: false) - DEPRECATED: Use toolbarButtons instead */
   enableExport?: boolean;
-  /** Callback when export is clicked */
+  /** Callback when export is clicked - DEPRECATED: Use toolbarButtons instead */
   onExport?: () => void;
+  /** Toolbar buttons displayed at the top-right of the table */
+  toolbarButtons?: ToolbarButtonDef[];
 }

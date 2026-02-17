@@ -4,25 +4,25 @@ import { DataTable } from "@/features/manageleads/ui/data-table/DataTable";
 import { EditSheet } from "@/features/manageleads/ui/edit-sheet/EditSheet";
 import { TableCard } from "@/features/manageleads/ui/table-card/TableCard";
 import type { ActionDef } from "@/features/manageleads/ui/data-table/types";
-import type { Portfolio } from "@/features/manageleads/config/portfolioconfig";
-import { 
-    initialData, 
-    editSheetFields, 
-    columns 
+import type { Portfolio as PortfolioData } from "@/features/manageleads/config/portfolioconfig";
+import {
+    initialData,
+    editSheetFields,
+    columns
 } from "@/features/manageleads/config/portfolioconfig";
 
 const Portfolio = () => {
-    const [data, setData] = useState<Portfolio[]>(initialData);
+    const [data, setData] = useState<PortfolioData[]>(initialData);
     const [editSheet, setEditSheet] = useState<{
         open: boolean;
-        data?: Portfolio | null;
+        data?: PortfolioData | null;
     }>({
         open: false,
         data: null,
     });
 
     // Handle opening the EditSheet
-    const handleEdit = useCallback((portfolio: Portfolio) => {
+    const handleEdit = useCallback((portfolio: PortfolioData) => {
         setEditSheet({
             open: true,
             data: portfolio,
@@ -30,7 +30,7 @@ const Portfolio = () => {
     }, []);
 
     // Handle saving the edited data
-    const handleSave = useCallback((formData: Portfolio) => {
+    const handleSave = useCallback((formData: PortfolioData) => {
         setData((prev) =>
             prev.map((item) => (item.id === editSheet.data?.id ? { ...formData, id: item.id } : item))
         );
@@ -38,7 +38,7 @@ const Portfolio = () => {
     }, [editSheet.data]);
 
     // Define actions (Only Edit action as requested)
-    const actions: ActionDef<Portfolio>[] = [
+    const actions: ActionDef<PortfolioData>[] = [
         {
             icon: <Edit2 size={16} className="text-blue-600" />,
             label: "Edit",
@@ -51,7 +51,7 @@ const Portfolio = () => {
             <h1 className="text-2xl font-semibold text-slate-900 shrink-0">Portfolio</h1>
 
             <TableCard>
-                <DataTable<Portfolio>
+                <DataTable<PortfolioData>
                     data={data}
                     columns={columns}
                     actions={{
@@ -66,7 +66,7 @@ const Portfolio = () => {
                     title="Portfolio"
                 />
 
-                <EditSheet<Portfolio>
+                <EditSheet<PortfolioData>
                     open={editSheet.open}
                     onOpenChange={(open) => setEditSheet((prev) => ({ ...prev, open }))}
                     title="Edit Portfolio"

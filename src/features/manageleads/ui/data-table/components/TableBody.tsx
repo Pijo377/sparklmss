@@ -2,6 +2,7 @@ import { flexRender } from "@tanstack/react-table";
 import type { Table, Row } from "@tanstack/react-table";
 import { cn } from "@/shared/lib/utils";
 import type { ColumnDef } from "../types";
+import { calculatePinnedRightPositions, STICKY_ACTIONS_WIDTH } from "../utils/pinnedColumns";
 
 interface TableBodyProps<T> {
   table: Table<T>;
@@ -10,8 +11,6 @@ interface TableBodyProps<T> {
   stickyActions?: boolean;
   isScrolled?: boolean;
 }
-
-const STICKY_ACTIONS_WIDTH = 120;
 
 /**
  * Table body with data rows
@@ -23,6 +22,9 @@ export function TableBody<T>({
   stickyActions = false,
   isScrolled = false,
 }: TableBodyProps<T>) {
+  // Calculate cumulative right positions for pinned columns
+  const pinnedRightPositions = calculatePinnedRightPositions(columns);
+
   return (
     <tbody>
       {table.getRowModel().rows.length > 0 ? (
@@ -39,6 +41,11 @@ export function TableBody<T>({
               const isSelectColumn = cell.column.id === "select";
               const align = (isActionsColumn || isSelectColumn) ? "center" : (columnDef?.align || "left");
               
+              // Check if column is pinned
+              const pinnedDirection = cell.column.columnDef.meta?.pinned;
+              const isPinned = !!pinnedDirection;
+              const rightPosition = pinnedRightPositions.get(cell.column.id) || 0;
+              
               // Sticky styles for actions column
               const stickyStyles = stickyActions && isActionsColumn ? {
                 position: "sticky" as const,
@@ -47,6 +54,14 @@ export function TableBody<T>({
                 minWidth: STICKY_ACTIONS_WIDTH,
                 maxWidth: STICKY_ACTIONS_WIDTH,
                 zIndex: 10,
+              } : isPinned && pinnedDirection === "right" ? {
+                position: "sticky" as const,
+                right: rightPosition,
+                zIndex: 9,
+              } : isPinned && pinnedDirection === "left" ? {
+                position: "sticky" as const,
+                left: 0,
+                zIndex: 9,
               } : {};
 
               return (
@@ -65,6 +80,10 @@ export function TableBody<T>({
                     align === "center" && "text-center",
                     align === "left" && "text-left",
                     stickyActions && isActionsColumn && cn("bg-white", isScrolled && "shadow-[inset_4px_0_8px_-4px_rgba(0,0,0,0.1)]"),
+                    isPinned && cn("bg-white", isScrolled && pinnedDirection === "right" && "shadow-[inset_4px_0_8px_-4px_rgba(0,0,0,0.1)]"),
+                    isPinned && cn("bg-white", isScrolled && pinnedDirection === "left" && "shadow-[inset_-4px_0_8px_-4px_rgba(0,0,0,0.1)]"),
+                    // Allow overflow for select dropdowns in pinned columns
+                    isPinned && "overflow-visible",
                   )}
                 >
                   <div className={cn("text-sm", enableColumnResizing ? "break-words whitespace-normal" : "truncate")}>

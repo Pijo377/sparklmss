@@ -81,6 +81,9 @@ export function useTableColumns<T extends Record<string, any>>(
           size: columnWidths[key],
           minSize: col.minWidth || 80,
           maxSize: col.maxWidth || 400,
+          meta: {
+            pinned: col.pinned,
+          },
         });
       }),
     );
@@ -96,16 +99,14 @@ export function useTableColumns<T extends Record<string, any>>(
         },
         cell: (info: any) => {
           const row = info.row.original;
-        // If custom render function is provided, use it
-          if (actions.render) {
-            return actions.render(row);
-          }
           
-          // Otherwise, use items array
-          const actionItems =
-            typeof actions.items === "function"
-              ? actions.items(row)
-              : actions.items;
+          // Get action items - handle both function and array
+          let actionItems: ActionDef<T>[] = [];
+          if (typeof actions.items === "function") {
+            actionItems = actions.items(row) || [];
+          } else if (Array.isArray(actions.items)) {
+            actionItems = actions.items;
+          }
 
           // Default actions if none provided
           const defaultActions: ActionDef<T>[] = [
@@ -131,8 +132,8 @@ export function useTableColumns<T extends Record<string, any>>(
 
           return (
             <div className="flex items-center justify-center gap-2">
-              {finalActions.map((action: { hide: (arg0: any) => any; onClick: (arg0: any) => void; label: string | undefined; icon: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined; }, idx: Key | null | undefined) => {
-                if (action.hide && action.hide(row)) return null;
+              {finalActions.map((action, idx) => {
+                if (action.hide && typeof action.hide === 'function' && action.hide(row)) return null;
                 
                 // Clone icon and add shake-icon class for animation
                 const iconWithClass = isValidElement(action.icon) 
@@ -150,8 +151,19 @@ export function useTableColumns<T extends Record<string, any>>(
                       return "text-blue-600 hover:bg-blue-50 hover:text-blue-700"; // Blue - view/info
                     case "copy":
                       return "text-rose-600 hover:bg-rose-50 hover:text-rose-700"; // Rose - copy action
+                    case "save":
+                      return "text-green-600 hover:bg-green-50 hover:text-green-700"; // Green - save action
+                    case "reset":
+                      return "text-orange-600 hover:bg-orange-50 hover:text-orange-700"; // Orange - reset action
+                    case "edit":
+                      return "text-blue-600 hover:bg-blue-50 hover:text-blue-700"; // Blue - edit action
+                    case "delete":
+                      return "text-red-600 hover:bg-red-50 hover:text-red-700"; // Red - delete action
+                    case "void":
+                    case "void loan":
+                      return "text-red-600 hover:bg-red-50 hover:text-red-700"; // Red - void action
                     default:
-                      return "text-gray-500 hover:bg-gray-50 hover:text-gray-600";
+                      return "text-gray-600 hover:bg-gray-50 hover:text-gray-700";
                   }
                 };
 
