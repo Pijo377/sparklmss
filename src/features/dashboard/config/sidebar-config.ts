@@ -81,6 +81,13 @@ export const dashboardNavigationItems: NavItem[] = [
     icon: IoPeople, 
     iconOutline: IoPeopleOutline, 
     path: "/customers/incomplete", 
+  },
+  {
+    id: "users",
+    label: "Users Management",
+    icon: IoPerson,
+    iconOutline: IoPersonOutline,
+    path: "/dashboard/users",
   }, 
     { 
     id: "transaction", 
