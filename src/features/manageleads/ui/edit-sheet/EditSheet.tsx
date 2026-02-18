@@ -15,12 +15,13 @@ import { Input } from "@/shared/components/ui/input";
 import { Label } from "@/shared/components/ui/label";
 import { CurrencyInput } from "@/shared/components/ui/currency-input";
 import { TimePicker } from "@/shared/components/ui/date-picker-09";
+import { DragReorderField } from "@/shared/components/ui/drag-reorder-field";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/components/ui/select";
 // 2️⃣ TYPE DEFINITIONS
 export interface EditSheetField {
   key: string;
   label: string;
-  type?: "text" | "number" | "currency" | "date" | "time" | "select" | "textarea" | "checkbox";
+  type?: "text" | "number" | "currency" | "date" | "time" | "select" | "textarea" | "checkbox" | "drag-reorder";
   options?: { value: string; label: string }[];
   editable?: boolean;
   placeholder?: string;
@@ -28,6 +29,8 @@ export interface EditSheetField {
   validate?: (value: unknown, data: Record<string, unknown>) => string | null;
   format?: (value: string) => string; // NEW: Format input values
   groupLabel?: string; // New: Heading/title for a group of fields
+  disabledIf?: (data: Record<string, unknown>) => boolean; // New: Conditionally disable based on form data
+  hiddenIf?: (data: Record<string, unknown>) => boolean; // New: Conditionally hide based on form data
 }
 
 interface EditSheetProps<T extends Record<string, unknown>> {
@@ -130,6 +133,14 @@ function EditSheetForm<T extends Record<string, unknown>>({
         if (field.type === "number") base[field.key] = 0;
         else if (field.type === "currency") base[field.key] = "0.00";
         else if (field.type === "checkbox") base[field.key] = false;
+        else if (field.type === "drag-reorder") base[field.key] = [
+          { id: "f1", label: "Delinquent Principal" },
+          { id: "f2", label: "Current Principal" },
+          { id: "f3", label: "Delinquent Interest" },
+          { id: "f4", label: "Deferred Interest" },
+          { id: "f5", label: "Deferred Principal" },
+          { id: "f6", label: "Fees" },
+        ];
         else if (isBooleanSelect(field)) base[field.key] = false;
         else base[field.key] = "";
       }
@@ -283,7 +294,7 @@ function EditSheetForm<T extends Record<string, unknown>>({
   // 1️⃣1️⃣ RENDER HELPERS
   const renderField = (field: EditSheetField) => {
     const value = formData[field.key];
-    const isEditable = field.editable !== false;
+    const isEditable = field.editable !== false && !(field.disabledIf?.(formData as Record<string, unknown>));
     const error = showValidation ? errors[field.key] : undefined;
     const errorClass = error
       ? "border-red-300 focus:ring-red-500 focus:border-transparent"
@@ -354,6 +365,28 @@ function EditSheetForm<T extends Record<string, unknown>>({
             <span className="text-sm font-medium text-gray-700">{field.label}</span>
           </label>
           {checkboxError && <p className="mt-1 text-xs text-red-600">{checkboxError}</p>}
+        </div>
+      );
+    }
+
+    if (field.type === "drag-reorder") {
+      const dragReorderError = showValidation ? errors[field.key] : undefined;
+      return (
+        <div>
+          <DragReorderField
+            label={field.label}
+            value={
+              Array.isArray(value)
+                ? value
+                : typeof value === "string" && value
+                  ? [{ id: "1", label: value }]
+                  : []
+            }
+            onChange={(newValue) => handleChange(field.key, newValue)}
+            disabled={!isEditable}
+            showLabel={false}
+          />
+          {dragReorderError && <p className="mt-1 text-xs text-red-600">{dragReorderError}</p>}
         </div>
       );
     }
@@ -436,6 +469,9 @@ function EditSheetForm<T extends Record<string, unknown>>({
           <div className="space-y-5">
             {fields.map((field, index) => {
               const isFirstInGroup = field.groupLabel && (index === 0 || fields[index - 1].groupLabel !== field.groupLabel);
+              const isHidden = field.hiddenIf?.(formData as Record<string, unknown>) || false;
+
+              if (isHidden) return null;
 
               return (
                 <React.Fragment key={field.key}>

@@ -1,9 +1,9 @@
-import React, { useState, useCallback } from "react";
-import { Edit2, Trash2, Power, Plus, CheckCircle, XCircle } from "lucide-react";
+import  { useState, useCallback } from "react";
+import { Edit2, Trash2,  Plus, CheckCircle, XCircle } from "lucide-react";
 import { DataTable } from "@/features/manageleads/ui/data-table/DataTable";
-import { EditSheet, type EditSheetField } from "@/features/manageleads/ui/edit-sheet/EditSheet";
+import { EditSheet } from "@/features/manageleads/ui/edit-sheet/EditSheet";
 import { TableCard } from "@/features/manageleads/ui/table-card/TableCard";
-import type { ColumnDef, ActionDef, ToolbarButtonDef } from "@/features/manageleads/ui/data-table/types";
+import type { ActionDef, ToolbarButtonDef } from "@/features/manageleads/ui/data-table/types";
 import { initialData, editSheetFields, columns } from "@/features/manageleads/config/rebatepromocodeconfig";
 import type { RebatePromoCode } from "@/features/manageleads/config/rebatepromocodeconfig";
 

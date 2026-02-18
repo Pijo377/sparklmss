@@ -5,6 +5,7 @@ import UsersTablePage from "./pages/UsersTablePage";
 import CampaignConfig from "./pages/CampaignConfig";
 import Portfolio from "@/features/manageleads/pages/portfolio";
 import RebatePromoCode from "@/features/manageleads/pages/RebatePromoCode";
+import ProductPage from "@/features/manageleads/pages/Product";
 import DummyPage from "./pages/Dummy";
 
 export const dashboardRoutes: RouteObject = {
@@ -18,7 +19,7 @@ export const dashboardRoutes: RouteObject = {
         { path: "dummy", element: <DummyPage title="Campaign" /> },
         { path: "activity-tab", element: <DummyPage title="Activity" /> },
         { path: "vitals-tab", element: <DummyPage title="Vitals" /> },
-        { path: "leads/product", element: <DummyPage title="Product" /> },
+        { path: "leads/product", element: <ProductPage /> },
         { path: "leads/rebate", element: <RebatePromoCode /> },
         { path: "leads/mapping", element: <DummyPage title="Portfolio Mapping" /> },
         { path: "leads/blacklist", element: <DummyPage title="Blacklist Management" /> },
