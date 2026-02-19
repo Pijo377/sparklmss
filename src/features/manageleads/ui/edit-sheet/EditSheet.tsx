@@ -17,11 +17,13 @@ import { CurrencyInput } from "@/shared/components/ui/currency-input";
 import { TimePicker } from "@/shared/components/ui/date-picker-09";
 import { DragReorderField } from "@/shared/components/ui/drag-reorder-field";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/components/ui/select";
+import { PasswordField } from "@/shared/components/ui/password-field";
+import { WeeklySchedule, type WeeklyScheduleValue } from "@/shared/components/ui/weekly-schedule";
 // 2️⃣ TYPE DEFINITIONS
 export interface EditSheetField {
   key: string;
   label: string;
-  type?: "text" | "number" | "currency" | "date" | "time" | "select" | "textarea" | "checkbox" | "drag-reorder";
+  type?: "text" | "number" | "currency" | "date" | "time" | "select" | "textarea" | "checkbox" | "drag-reorder" | "password" | "schedule";
   options?: { value: string; label: string }[];
   editable?: boolean;
   placeholder?: string;
@@ -233,6 +235,10 @@ function EditSheetForm<T extends Record<string, unknown>>({
           if (!/^\d{2}:\d{2}(:\d{2})?$/.test(asString)) nextErrors[field.key] = `${field.label} must be a valid time.`;
         }
 
+        if (field.type === "password" && typeof value === "string") {
+          if (value.length < 1) nextErrors[field.key] = `${field.label} is required.`;
+        }
+
         if (field.type === "select" && field.options?.length) {
           const asString = String(value);
           const allowed = new Set(field.options.map((o) => o.value));
@@ -391,6 +397,35 @@ function EditSheetForm<T extends Record<string, unknown>>({
             showLabel={false}
           />
           {dragReorderError && <p className="mt-1 text-xs text-red-600">{dragReorderError}</p>}
+        </div>
+      );
+    }
+
+    if (field.type === "password") {
+      return (
+        <div>
+          <PasswordField
+            id={field.key}
+            value={String(value ?? "")}
+            onChange={(e) => handleChange(field.key, e.target.value)}
+            disabled={!isEditable}
+            placeholder={field.placeholder}
+            className={`h-11 px-4 text-sm bg-white border rounded-xl focus:outline-none focus:ring-2 disabled:bg-gray-50 disabled:text-gray-500 disabled:cursor-not-allowed transition-all duration-200 ${errorClass}`}
+          />
+          {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
+        </div>
+      );
+    }
+
+    if (field.type === "schedule") {
+      return (
+        <div>
+          <WeeklySchedule
+            value={value as WeeklyScheduleValue}
+            onChange={(val) => handleChange(field.key, val)}
+            disabled={!isEditable}
+          />
+          {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
         </div>
       );
     }
