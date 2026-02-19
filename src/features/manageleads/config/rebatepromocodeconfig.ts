@@ -26,7 +26,7 @@ export const initialData: RebatePromoCode[] = [
         applicableTo: "First Payment",
         validFrom: "11/12/2025",
         validTo: "11/30/2025",
-        imageName: "Promo Banner 1", 
+        imageName: "Promo Banner 1",
         imageField: "Main Page",
         imageText: "Limited Time Offer"
     },
@@ -125,6 +125,30 @@ export const editSheetFields: EditSheetField[] = [
         key: "validTo",
         label: "Valid To",
         type: "date",
+        minDate: (data) => {
+            const validFrom = data.validFrom as string;
+            // Handle both YYYY-MM-DD and MM/DD/YYYY formats
+            if (!validFrom) return undefined;
+
+            let date: Date;
+            if (validFrom.includes('/')) {
+                date = new Date(validFrom);
+            } else {
+                // Already YYYY-MM-DD
+                date = new Date(validFrom);
+            }
+
+            if (isNaN(date.getTime())) return undefined;
+
+            // Add 1 day
+            date.setDate(date.getDate() + 1);
+
+            // Return in YYYY-MM-DD format for the input min attribute
+            const yyyy = date.getFullYear();
+            const mm = String(date.getMonth() + 1).padStart(2, "0");
+            const dd = String(date.getDate()).padStart(2, "0");
+            return `${yyyy}-${mm}-${dd}`;
+        }
     },
     {
         key: "isActive",

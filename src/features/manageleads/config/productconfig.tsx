@@ -94,6 +94,15 @@ export const editSheetFields: EditSheetField[] = [
         hiddenIf: (data: any) => data.productType === 'installment' || data.productType === 'autotitle',
         validate: (value) => Number(value) < 0 ? "Interest Rate must be 0 or greater" : null
     },
+     {
+        key: "apr",
+        label: "APR [%]",
+        type: "number",
+        placeholder: "Enter APR",
+        required: false,
+        hiddenIf: (data: any) => data.productType === 'payday' || data.productType === 'revolving_line_of_credit' || data.productType === 'cab_cso',
+        validate: (value: any) => value !== undefined && value !== null && Number(value) < 0 ? "APR must be 0 or greater" : null
+    },
     {
         key: "loanAgreementName",
         label: "Loan Agreement Name",
@@ -126,207 +135,7 @@ export const editSheetFields: EditSheetField[] = [
         required: true,
         validate: (value) => Number(value) < 0 ? "Soft Return Count must be 0 or greater" : null
     },
-    {
-        key: "isOriginationFeeActive",
-        label: "Is Origination Fee Active?",
-        type: "checkbox",
-        required: false,
-    },
-    {
-        key: "originationFeeAmount",
-        label: "Origination Fee Amount [$]",
-        type: "currency",
-        placeholder: "Enter amount (e.g., $33.33)",
-        required: false,
-        hiddenIf: (data) => !data.isOriginationFeeActive,
-        validate: (value, data) => {
-            if (data.isOriginationFeeActive && (!value || Number(value) < 0)) {
-                return "Origination Fee Amount must be 0 or greater when fee is active";
-            }
-            return null;
-        }
-    },
-    {
-        key: "isNSFFeeActive",
-        label: "Is NSF Fee Active?",
-        type: "checkbox",
-        required: false,
-    },
-    {
-        key: "nsfFeeAmount",
-        label: "NSF Fee Amount [$]",
-        type: "currency",
-        placeholder: "Enter amount (e.g., $333.00)",
-        required: false,
-        hiddenIf: (data) => !data.isNSFFeeActive,
-        validate: (value, data) => {
-            if (data.isNSFFeeActive && (!value || Number(value) < 0)) {
-                return "NSF Fee Amount must be 0 or greater when fee is active";
-            }
-            return null;
-        }
-    },
-    {
-        key: "isLateFeeActive",
-        label: "Is Late Fee Active?",
-        type: "checkbox",
-        required: false,
-    },
-    {
-        key: "lateFeeAmount",
-        label: "Late Fee Amount [$]",
-        type: "currency",
-        placeholder: "Enter amount (e.g., $34.00)",
-        required: false,
-        hiddenIf: (data) => !data.isLateFeeActive,
-        validate: (value, data) => {
-            if (data.isLateFeeActive && (!value || Number(value) < 0)) {
-                return "Late Fee Amount must be 0 or greater when fee is active";
-            }
-            return null;
-        }
-    },
-    {
-        key: "onlyCABCSO",
-        label: "Only CAB/CSO Fee?",
-        type: "checkbox",
-        required: false,
-        hiddenIf: (data: any) => data.productType === 'payday' || data.productType === 'installment',
-    },
-    {
-        key: "isActive",
-        label: "Is this Product Active?",
-        type: "checkbox",
-        required: false,
-    },
-    {
-        key: "isPrincipalPaymentActive",
-        label: "Is Principal Payment active?",
-        type: "checkbox",
-        required: false,
-        hiddenIf: (data: any) => data.productType !== 'payday',
-    },
-    {
-        key: "principalPaymentInterest",
-        label: "Interest",
-        type: "number",
-        placeholder: "Enter Interest",
-        required: false,
-        hiddenIf: (data: any) => !data.isPrincipalPaymentActive || data.productType !== 'payday',
-        validate: (value: any, data: any) => {
-            if (data.isPrincipalPaymentActive && !data.hiddenIf?.(data) && (value === undefined || value === null || value === '')) {
-                return "Interest is required when Principal Payment is active";
-            }
-            return null;
-        }
-    },
-    {
-        key: "principalPaymentAmount",
-        label: "Principal Amount [$]",
-        type: "currency",
-        placeholder: "$3434",
-        required: false,
-        hiddenIf: (data: any) => !data.isPrincipalPaymentActive || data.productType !== 'payday',
-        validate: (value: any, data: any) => {
-            if (data.isPrincipalPaymentActive && !data.hiddenIf?.(data) && (value === undefined || value === null || value === '')) {
-                return "Principal Amount is required when Principal Payment is active";
-            }
-            return null;
-        }
-    },
-    {
-        key: "isExtensionNeeded",
-        label: "Is Extension Needed?",
-        type: "checkbox",
-        required: false,
-        hiddenIf: (data: any) => data.productType === 'installment' || data.productType === 'revolving_line_of_credit' || data.productType === 'autotitle',
-    },
-    {
-        key: "extensionInterest",
-        label: "Interest",
-        type: "number",
-        placeholder: "Enter Interest",
-        required: false,
-        hiddenIf: (data: any) => !data.isExtensionNeeded || (data.productType === 'installment' || data.productType === 'revolving_line_of_credit' || data.productType === 'autotitle'),
-        validate: (value: any, data: any) => {
-            if (data.isExtensionNeeded && !data.hiddenIf?.(data) && (value === undefined || value === null || value === '')) {
-                return "Interest is required when Extension is needed";
-            }
-            return null;
-        }
-    },
-    {
-        key: "extensionAmount",
-        label: "Extension Amount [$]",
-        type: "currency",
-        placeholder: "$3434",
-        required: false,
-        hiddenIf: (data: any) => !data.isExtensionNeeded || (data.productType === 'installment' || data.productType === 'revolving_line_of_credit' || data.productType === 'autotitle'),
-        validate: (value: any, data: any) => {
-            if (data.isExtensionNeeded && !data.hiddenIf?.(data) && (value === undefined || value === null || value === '')) {
-                return "Extension Amount is required when Extension is needed";
-            }
-            return null;
-        }
-    },
-    {
-        key: "accrueInterestOnDeferredPayment",
-        label: "Accrue Interest On Deferred Payment",
-        type: "checkbox",
-        required: false,
-        hiddenIf: (data: any) => data.productType === 'payday' || data.productType === 'revolving_line_of_credit' || data.productType === 'cab_cso',
-    },
-    {
-        key: "accrueInterestOnDelinquentPayment",
-        label: "Accrue Interest On Delinquent Payment",
-        type: "checkbox",
-        required: false,
-        hiddenIf: (data: any) => data.productType === 'payday' || data.productType === 'revolving_line_of_credit' || data.productType === 'cab_cso',
-    },
-    {
-        key: "addDelinquentPrincipalToBalance",
-        label: "Add Delinquent Principal To Balance",
-        type: "checkbox",
-        required: false,
-        hiddenIf: (data: any) => data.productType === 'payday' || data.productType === 'revolving_line_of_credit' || data.productType === 'cab_cso',
-    },
-    {
-        key: "deductDeferredPrincipalToBalance",
-        label: "Deduct Deferred Principal To Balance",
-        type: "checkbox",
-        required: false,
-        hiddenIf: (data: any) => data.productType === 'payday' || data.productType === 'revolving_line_of_credit' || data.productType === 'cab_cso',
-    },
-    {
-        key: "apr",
-        label: "APR [%]",
-        type: "number",
-        placeholder: "Enter APR",
-        required: false,
-        hiddenIf: (data: any) => data.productType === 'payday' || data.productType === 'revolving_line_of_credit' || data.productType === 'cab_cso',
-        validate: (value: any) => value !== undefined && value !== null && Number(value) < 0 ? "APR must be 0 or greater" : null
-    },
-    {
-        key: "loanDurationMin",
-        label: "Min",
-        type: "number",
-        placeholder: "Enter Min Duration",
-        groupLabel: "Loan Duration [Months]",
-        required: false,
-        hiddenIf: (data: any) => data.productType === 'payday' || data.productType === 'revolving_line_of_credit' || data.productType === 'cab_cso',
-        validate: (value: any) => value !== undefined && value !== null && Number(value) < 0 ? "Min Duration must be 0 or greater" : null
-    },
-    {
-        key: "loanDurationMax",
-        label: "Max",
-        type: "number",
-        placeholder: "Enter Max Duration",
-        groupLabel: "Loan Duration [Months]",
-        required: false,
-        hiddenIf: (data: any) => data.productType === 'payday' || data.productType === 'revolving_line_of_credit' || data.productType === 'cab_cso',
-        validate: (value: any) => value !== undefined && value !== null && Number(value) < 0 ? "Max Duration must be 0 or greater" : null
-    },
-    {
+      {
         key: "paymentDuringDrawingPeriod",
         label: "Payment During Drawing Period",
         type: "select",
@@ -418,14 +227,7 @@ export const editSheetFields: EditSheetField[] = [
         hiddenIf: (data: any) => data.productType !== 'cab_cso',
     },
 
-    {
-        key: "cabCsoFeePer100",
-        label: "CAB/CSO Fee (Per 100$)",
-        type: "currency",
-        placeholder: "Enter Fee per 100$",
-        required: false,
-        hiddenIf: (data: any) => data.productType !== 'cab_cso',
-    },
+   
     {
         key: "cabCsoType",
         label: "CAB/CSO Type",
@@ -479,6 +281,208 @@ export const editSheetFields: EditSheetField[] = [
             return null;
         }
     },
+   {
+        key: "cabCsoFeePer100",
+        label: "CAB/CSO Fee (Per 100$)",
+        type: "currency",
+        placeholder: "Enter Fee per 100$",
+        required: false,
+        hiddenIf: (data: any) => data.productType !== 'cab_cso',
+    },
+    {
+        key: "accrueInterestOnDeferredPayment",
+        label: "Accrue Interest On Deferred Payment",
+        type: "checkbox",
+        required: false,
+        hiddenIf: (data: any) => data.productType === 'payday' || data.productType === 'revolving_line_of_credit' || data.productType === 'cab_cso',
+    },
+    {
+        key: "accrueInterestOnDelinquentPayment",
+        label: "Accrue Interest On Delinquent Payment",
+        type: "checkbox",
+        required: false,
+        hiddenIf: (data: any) => data.productType === 'payday' || data.productType === 'revolving_line_of_credit' || data.productType === 'cab_cso',
+    },
+    {
+        key: "addDelinquentPrincipalToBalance",
+        label: "Add Delinquent Principal To Balance",
+        type: "checkbox",
+        required: false,
+        hiddenIf: (data: any) => data.productType === 'payday' || data.productType === 'revolving_line_of_credit' || data.productType === 'cab_cso',
+    },
+    {
+        key: "deductDeferredPrincipalToBalance",
+        label: "Deduct Deferred Principal To Balance",
+        type: "checkbox",
+        required: false,
+        hiddenIf: (data: any) => data.productType === 'payday' || data.productType === 'revolving_line_of_credit' || data.productType === 'cab_cso',
+    },
+   
+    {
+        key: "isOriginationFeeActive",
+        label: "Is Origination Fee Active?",
+        type: "checkbox",
+        required: false,
+    },
+    {
+        key: "originationFeeAmount",
+        label: "Origination Fee Amount [$]",
+        type: "currency",
+        placeholder: "Enter amount (e.g., $33.33)",
+        required: false,
+        hiddenIf: (data) => !data.isOriginationFeeActive,
+        validate: (value, data) => {
+            if (data.isOriginationFeeActive && (!value || Number(value) < 0)) {
+                return "Origination Fee Amount must be 0 or greater when fee is active";
+            }
+            return null;
+        }
+    },
+    {
+        key: "isNSFFeeActive",
+        label: "Is NSF Fee Active?",
+        type: "checkbox",
+        required: false,
+    },
+    {
+        key: "nsfFeeAmount",
+        label: "NSF Fee Amount [$]",
+        type: "currency",
+        placeholder: "Enter amount (e.g., $333.00)",
+        required: false,
+        hiddenIf: (data) => !data.isNSFFeeActive,
+        validate: (value, data) => {
+            if (data.isNSFFeeActive && (!value || Number(value) < 0)) {
+                return "NSF Fee Amount must be 0 or greater when fee is active";
+            }
+            return null;
+        }
+    },
+    {
+        key: "isLateFeeActive",
+        label: "Is Late Fee Active?",
+        type: "checkbox",
+        required: false,
+    },
+    {
+        key: "lateFeeAmount",
+        label: "Late Fee Amount [$]",
+        type: "currency",
+        placeholder: "Enter amount (e.g., $34.00)",
+        required: false,
+        hiddenIf: (data) => !data.isLateFeeActive,
+        validate: (value, data) => {
+            if (data.isLateFeeActive && (!value || Number(value) < 0)) {
+                return "Late Fee Amount must be 0 or greater when fee is active";
+            }
+            return null;
+        }
+    },
+     {
+        key: "loanDurationMin",
+        label: "Min",
+        type: "number",
+        placeholder: "Enter Min Duration",
+        groupLabel: "Loan Duration [Months]",
+        required: false,
+        hiddenIf: (data: any) => data.productType === 'payday' || data.productType === 'revolving_line_of_credit' || data.productType === 'cab_cso',
+        validate: (value: any) => value !== undefined && value !== null && Number(value) < 0 ? "Min Duration must be 0 or greater" : null
+    },
+    {
+        key: "loanDurationMax",
+        label: "Max",
+        type: "number",
+        placeholder: "Enter Max Duration",
+        groupLabel: "Loan Duration [Months]",
+        required: false,
+        hiddenIf: (data: any) => data.productType === 'payday' || data.productType === 'revolving_line_of_credit' || data.productType === 'cab_cso',
+        validate: (value: any) => value !== undefined && value !== null && Number(value) < 0 ? "Max Duration must be 0 or greater" : null
+    },
+   
+    {
+        key: "onlyCABCSO",
+        label: "Only CAB/CSO Fee?",
+        type: "checkbox",
+        required: false,
+        hiddenIf: (data: any) => data.productType === 'payday' || data.productType === 'installment',
+    },
+    {
+        key: "isActive",
+        label: "Is this Product Active?",
+        type: "checkbox",
+        required: false,
+    },
+    {
+        key: "isPrincipalPaymentActive",
+        label: "Is Principal Payment active?",
+        type: "checkbox",
+        required: false,
+        hiddenIf: (data: any) => data.productType !== 'payday',
+    },
+    {
+        key: "principalPaymentInterest",
+        label: "Interest",
+        type: "number",
+        placeholder: "Enter Interest",
+        required: false,
+        hiddenIf: (data: any) => !data.isPrincipalPaymentActive || data.productType !== 'payday',
+        validate: (value: any, data: any) => {
+            if (data.isPrincipalPaymentActive && !data.hiddenIf?.(data) && (value === undefined || value === null || value === '')) {
+                return "Interest is required when Principal Payment is active";
+            }
+            return null;
+        }
+    },
+    {
+        key: "principalPaymentAmount",
+        label: "Principal Amount [$]",
+        type: "currency",
+        placeholder: "$3434",
+        required: false,
+        hiddenIf: (data: any) => !data.isPrincipalPaymentActive || data.productType !== 'payday',
+        validate: (value: any, data: any) => {
+            if (data.isPrincipalPaymentActive && !data.hiddenIf?.(data) && (value === undefined || value === null || value === '')) {
+                return "Principal Amount is required when Principal Payment is active";
+            }
+            return null;
+        }
+    },
+    {
+        key: "isExtensionNeeded",
+        label: "Is Extension Needed?",
+        type: "checkbox",
+        required: false,
+        hiddenIf: (data: any) => data.productType === 'installment' || data.productType === 'revolving_line_of_credit' || data.productType === 'autotitle',
+    },
+    {
+        key: "extensionInterest",
+        label: "Interest",
+        type: "number",
+        placeholder: "Enter Interest",
+        required: false,
+        hiddenIf: (data: any) => !data.isExtensionNeeded || (data.productType === 'installment' || data.productType === 'revolving_line_of_credit' || data.productType === 'autotitle'),
+        validate: (value: any, data: any) => {
+            if (data.isExtensionNeeded && !data.hiddenIf?.(data) && (value === undefined || value === null || value === '')) {
+                return "Interest is required when Extension is needed";
+            }
+            return null;
+        }
+    },
+    {
+        key: "extensionAmount",
+        label: "Extension Amount [$]",
+        type: "currency",
+        placeholder: "$3434",
+        required: false,
+        hiddenIf: (data: any) => !data.isExtensionNeeded || (data.productType === 'installment' || data.productType === 'revolving_line_of_credit' || data.productType === 'autotitle'),
+        validate: (value: any, data: any) => {
+            if (data.isExtensionNeeded && !data.hiddenIf?.(data) && (value === undefined || value === null || value === '')) {
+                return "Extension Amount is required when Extension is needed";
+            }
+            return null;
+        }
+    },
+    
     {
         key: "featureOrder",
         label: "Paydown order (Drag to Reorder)",

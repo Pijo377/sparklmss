@@ -27,6 +27,7 @@ export interface EditSheetField {
   placeholder?: string;
   required?: boolean;
   validate?: (value: unknown, data: Record<string, unknown>) => string | null;
+  minDate?: (data: Record<string, unknown>) => string | undefined; // New: Dynamic min date
   format?: (value: string) => string; // NEW: Format input values
   groupLabel?: string; // New: Heading/title for a group of fields
   disabledIf?: (data: Record<string, unknown>) => boolean; // New: Conditionally disable based on form data
@@ -300,6 +301,9 @@ function EditSheetForm<T extends Record<string, unknown>>({
       ? "border-red-300 focus:ring-red-500 focus:border-transparent"
       : "border-gray-200 focus:ring-blue-500 focus:border-transparent";
 
+    // Calculate min date if applicable
+    const minDate = field.type === "date" ? field.minDate?.(formData as Record<string, unknown>) : undefined;
+
     if (field.type === "select" && field.options) {
       return (
         <div>
@@ -416,6 +420,7 @@ function EditSheetForm<T extends Record<string, unknown>>({
             id={field.key}
             type={field.type || "text"}
             value={field.type === "date" ? toDateInputString(value) : String(value ?? "")}
+            min={minDate} // Pass min date to input
             onChange={(e) =>
               handleChange(
                 field.key,
