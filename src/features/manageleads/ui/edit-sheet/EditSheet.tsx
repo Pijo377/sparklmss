@@ -28,6 +28,7 @@ export interface EditSheetField {
   editable?: boolean;
   placeholder?: string;
   required?: boolean;
+  min?: number; // New: Minimum value for number inputs
   validate?: (value: unknown, data: Record<string, unknown>) => string | null;
   minDate?: (data: Record<string, unknown>) => string | undefined; // New: Dynamic min date
   format?: (value: string) => string; // NEW: Format input values
@@ -64,7 +65,7 @@ interface EditSheetFormProps<T extends Record<string, unknown>> {
   saveButtonText?: string;
   saveButtonIcon?: React.ReactNode;
   showResetButton?: boolean;
-}
+  }
 
 // 3️⃣ CONSTANTS - None
 
@@ -455,7 +456,7 @@ function EditSheetForm<T extends Record<string, unknown>>({
             id={field.key}
             type={field.type || "text"}
             value={field.type === "date" ? toDateInputString(value) : String(value ?? "")}
-            min={minDate} // Pass min date to input
+            min={minDate ?? field.min} // Pass min date to input
             onChange={(e) =>
               handleChange(
                 field.key,

@@ -51,24 +51,26 @@ export const editSheetFields: EditSheetField[] = [
     { key: "campaignName", label: "Campaign Name", type: "text", required: true, placeholder: "Enter Campaign Name" },
     { key: "userName", label: "User Name", type: "text", required: true, placeholder: "Enter User Name" },
     { key: "password", label: "Password", type: "password", required: true, placeholder: "Enter Password" },
-    { key: "maxHourlyLead", label: "Max Hourly Lead", type: "number", required: true, placeholder: "Enter Max Hourly Lead", validate: (val) => Number(val) < 0 ? "Must be positive" : null },
+    { key: "maxHourlyLead", label: "Max Hourly Lead", type: "number", required: true, min: 0, placeholder: "Enter Max Hourly Lead", validate: (val) => Number(val) < 0 ? "Must be positive" : null },
     {
         key: "maxDailyLeads",
         label: "Max Daily Leads",
         type: "number",
         required: true,
+        min: 0,
         placeholder: "Enter Max Daily Leads",
         validate: (val) => {
             if (Number(val) < 0) return "Must be positive";
             return null;
         }
     },
-    { key: "minLoanAmount", label: "Min Loan Amount", type: "number", required: true, placeholder: "Enter Min Loan Amount", validate: (val) => Number(val) < 0 ? "Must be positive" : null },
+    { key: "minLoanAmount", label: "Min Loan Amount", type: "number", required: true, min: 0, placeholder: "Enter Min Loan Amount", validate: (val) => Number(val) < 0 ? "Must be positive" : null },
     {
         key: "maxLoanAmount",
         label: "Max Loan Amount",
         type: "number",
         required: true,
+        min: 0,
         placeholder: "Enter Max Loan Amount",
         validate: (val, data) => {
             if (Number(val) < 0) return "Must be positive";
@@ -76,12 +78,13 @@ export const editSheetFields: EditSheetField[] = [
             return null;
         }
     },
-    { key: "firstPaymentMinDuration", label: "First Payment Min Duration", type: "number", required: true, placeholder: "Enter Min Duration", validate: (val) => Number(val) < 0 ? "Must be positive" : null },
+    { key: "firstPaymentMinDuration", label: "First Payment Min Duration", type: "number", required: true, min: 0, placeholder: "Enter Min Duration", validate: (val) => Number(val) < 0 ? "Must be positive" : null },
     {
         key: "firstPaymentMaxDuration",
         label: "First Payment Max Duration",
         type: "number",
         required: true,
+        min: 0,
         placeholder: "Enter Max Duration",
         validate: (val, data) => {
             if (Number(val) < 0) return "Must be positive";
@@ -89,7 +92,7 @@ export const editSheetFields: EditSheetField[] = [
             return null;
         }
     },
-    { key: "loanToIncomeRatio", label: "Loan to Income Ratio", type: "number", required: true, placeholder: "Enter Ratio", validate: (val) => Number(val) < 0 ? "Must be positive" : null },
+    { key: "loanToIncomeRatio", label: "Loan to Income Ratio", type: "number", required: true, min: 0, placeholder: "Enter Ratio", validate: (val) => Number(val) < 0 ? "Must be positive" : null },
     { key: "isAchCoolOffNeeded", label: "Is ACH Cool-Off Needed?", type: "checkbox" },
     {
         key: "achCoolOffDays",
@@ -98,7 +101,7 @@ export const editSheetFields: EditSheetField[] = [
         hiddenIf: (data: Record<string, any>) => !data.isAchCoolOffNeeded,
         placeholder: "Enter Days"
     },
-    { key: "leadCost", label: "Lead Cost", type: "number", required: true, placeholder: "Enter Lead Cost", validate: (val) => Number(val) < 0 ? "Must be positive" : null },
+    { key: "leadCost", label: "Lead Cost", type: "number", required: true, min: 0, placeholder: "Enter Lead Cost", validate: (val) => Number(val) < 0 ? "Must be positive" : null },
     {
         key: "autoOriginateGroup",
         label: "Auto Originate Group",

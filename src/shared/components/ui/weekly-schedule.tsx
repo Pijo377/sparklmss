@@ -126,7 +126,7 @@ export function WeeklySchedule({
                                 {daySchedule.day}
                             </span>
                             <div className="flex items-center gap-3">
-                                <span className="text-xs text-gray-500 font-mono">
+                                <span className="text-xs text-gray-500 font-mono mt-1">
                                     {daySchedule.startTime && daySchedule.endTime
                                         ? `${daySchedule.startTime} - ${daySchedule.endTime}`
                                         : "Not Set"
@@ -152,9 +152,7 @@ export function WeeklySchedule({
                 <SheetContent
                     side="top"
                     className={cn(
-                        "h-auto p-0",
-                        // Resetting default sheet positioning to float
-                        "!inset-x-0 !top-4 !left-[50%] !translate-x-[-50%] !w-[95vw] md:!w-[550px] !max-w-none !rounded-xl !border shadow-2xl",
+                        "h-auto p-0","!inset-x-0 !top-4 !left-[50%] !translate-x-[-50%] !w-[95vw] md:!w-[550px] !max-w-none !rounded-xl !border shadow-2xl",
                         "bg-white data-[state=open]:slide-in-from-top-4"
                     )}
                 >

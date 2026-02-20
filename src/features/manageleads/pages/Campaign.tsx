@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { Edit2, Copy, Plus, CheckCircle, XCircle } from "lucide-react";
+import { Edit2, CopyPlus, Plus, CheckCircle, XCircle } from "lucide-react";
 import { DataTable } from "@/features/manageleads/ui/data-table/DataTable";
 import EditSheet from "@/features/manageleads/ui/edit-sheet/EditSheet";
 import { TableCard } from "@/features/manageleads/ui/table-card/TableCard";
@@ -73,7 +73,7 @@ const CampaignPage = () => {
             onClick: handleEdit,
         },
         {
-            icon: <Copy size={16} className="text-orange-600" />,
+            icon: <CopyPlus size={16} className="text-orange-600" />,
             label: "Copy",
             onClick: handleCopy,
         },
