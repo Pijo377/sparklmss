@@ -25,10 +25,14 @@ export interface EditSheetField {
   label: string;
   type?: "text" | "number" | "currency" | "date" | "time" | "select" | "textarea" | "checkbox" | "drag-reorder" | "password" | "schedule";
   options?: { value: string; label: string }[];
+  optionsIf?: (data: Record<string, unknown>) => { value: string; label: string }[]; // New: Dynamic options based on form data
   editable?: boolean;
   placeholder?: string;
   required?: boolean;
   min?: number; // New: Minimum value for number inputs
+  max?: number; // New: Maximum value for number inputs
+  maxLength?: number; // New: Maximum character length for text inputs
+  hideMaxLimitMessage?: boolean; // New: Hide the real-time max limit message
   validate?: (value: unknown, data: Record<string, unknown>) => string | null;
   minDate?: (data: Record<string, unknown>) => string | undefined; // New: Dynamic min date
   format?: (value: string) => string; // NEW: Format input values
@@ -65,7 +69,7 @@ interface EditSheetFormProps<T extends Record<string, unknown>> {
   saveButtonText?: string;
   saveButtonIcon?: React.ReactNode;
   showResetButton?: boolean;
-  }
+}
 
 // 3️⃣ CONSTANTS - None
 
@@ -245,6 +249,19 @@ function EditSheetForm<T extends Record<string, unknown>>({
           const allowed = new Set(field.options.map((o) => o.value));
           if (!allowed.has(asString)) nextErrors[field.key] = `${field.label} must be a valid option.`;
         }
+
+        // Generic maxLength check
+        if (field.maxLength && typeof value === "string" && value.length > field.maxLength) {
+          nextErrors[field.key] = `${field.label} must not exceed ${field.maxLength} characters.`;
+        }
+
+        // Generic max value check
+        if (field.max !== undefined) {
+          const numVal = typeof value === "number" ? value : Number(String(value).replace(/,/g, ''));
+          if (Number.isFinite(numVal) && numVal > field.max) {
+            nextErrors[field.key] = `${field.label} must not exceed ${field.max.toLocaleString()}.`;
+          }
+        }
       }
 
       // Always call custom validator
@@ -277,7 +294,17 @@ function EditSheetForm<T extends Record<string, unknown>>({
     const nextErrors = validateAll(formData);
     setErrors(nextErrors);
     setShowValidation(true);
-    if (Object.keys(nextErrors).length > 0) return;
+    if (Object.keys(nextErrors).length > 0) {
+      // Scroll to the first field with an error
+      setTimeout(() => {
+        const firstErrorKey = fields.find((f) => nextErrors[f.key])?.key;
+        if (firstErrorKey) {
+          const el = document.getElementById(firstErrorKey);
+          el?.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+      }, 0);
+      return;
+    }
 
     // Convert currency strings back to numbers before saving
     const dataToSave = { ...formData } as Record<string, any>;
@@ -304,14 +331,22 @@ function EditSheetForm<T extends Record<string, unknown>>({
     const value = formData[field.key];
     const isEditable = field.editable !== false && !(field.disabledIf?.(formData as Record<string, unknown>));
     const error = showValidation ? errors[field.key] : undefined;
-    const errorClass = error
+
+    // Check if value has reached or exceeded maxLength (real-time warning)
+    const strValue = value !== undefined && value !== null ? String(value).replace(/,/g, '') : "";
+    const isAtMaxLength = field.maxLength && strValue.length >= field.maxLength && !field.hideMaxLimitMessage;
+
+    const errorClass = (error || (field.maxLength && strValue.length >= field.maxLength && !field.hideMaxLimitMessage))
       ? "border-red-300 focus:ring-red-500 focus:border-transparent"
       : "border-gray-200 focus:ring-blue-500 focus:border-transparent";
 
     // Calculate min date if applicable
     const minDate = field.type === "date" ? field.minDate?.(formData as Record<string, unknown>) : undefined;
 
-    if (field.type === "select" && field.options) {
+    // Dynamic options
+    const currentOptions = field.optionsIf ? field.optionsIf(formData as Record<string, unknown>) : field.options;
+
+    if (field.type === "select" && currentOptions) {
       return (
         <div>
           <Select
@@ -329,7 +364,7 @@ function EditSheetForm<T extends Record<string, unknown>>({
               <SelectValue placeholder="Select an option" />
             </SelectTrigger>
             <SelectContent>
-              {field.options.map((opt) => (
+              {currentOptions.map((opt) => (
                 <SelectItem key={opt.value} value={opt.value}>
                   {opt.label}
                 </SelectItem>
@@ -350,10 +385,12 @@ function EditSheetForm<T extends Record<string, unknown>>({
             onChange={(e) => handleChange(field.key, e.target.value)}
             disabled={!isEditable}
             placeholder={field.placeholder}
+            maxLength={field.maxLength}
             rows={4}
             className={`w-full px-4 py-3 text-sm bg-white border rounded-xl resize-none focus:outline-none focus:ring-2 disabled:bg-gray-50 disabled:text-gray-500 disabled:cursor-not-allowed transition-all duration-200 ${errorClass}`}
           />
-          {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
+          {isAtMaxLength && <p className="mt-1 text-xs text-red-600 font-medium">Max limit of {field.maxLength} characters</p>}
+          {error && !isAtMaxLength && <p className="mt-1 text-xs text-red-600">{error}</p>}
         </div>
       );
     }
@@ -411,9 +448,11 @@ function EditSheetForm<T extends Record<string, unknown>>({
             onChange={(e) => handleChange(field.key, e.target.value)}
             disabled={!isEditable}
             placeholder={field.placeholder}
+            maxLength={field.maxLength}
             className={`h-11 px-4 text-sm bg-white border rounded-xl focus:outline-none focus:ring-2 disabled:bg-gray-50 disabled:text-gray-500 disabled:cursor-not-allowed transition-all duration-200 ${errorClass}`}
           />
-          {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
+          {isAtMaxLength && <p className="mt-1 text-xs text-red-600 font-medium">Max limit of {field.maxLength} characters</p>}
+          {error && !isAtMaxLength && <p className="mt-1 text-xs text-red-600">{error}</p>}
         </div>
       );
     }
@@ -457,6 +496,7 @@ function EditSheetForm<T extends Record<string, unknown>>({
             type={field.type || "text"}
             value={field.type === "date" ? toDateInputString(value) : String(value ?? "")}
             min={minDate ?? field.min} // Pass min date to input
+            maxLength={field.type === "text" ? field.maxLength : undefined}
             onChange={(e) =>
               handleChange(
                 field.key,
@@ -470,7 +510,8 @@ function EditSheetForm<T extends Record<string, unknown>>({
             className={`h-11 px-4 text-sm bg-white border rounded-xl focus:outline-none focus:ring-2 disabled:bg-gray-50 disabled:text-gray-500 disabled:cursor-not-allowed transition-all duration-200 ${errorClass}`}
           />
         )}
-        {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
+        {isAtMaxLength && <p className="mt-1 text-xs text-red-600 font-medium">Max limit of {field.maxLength} characters</p>}
+        {error && !isAtMaxLength && <p className="mt-1 text-xs text-red-600">{error}</p>}
       </div>
     );
   };
@@ -488,7 +529,8 @@ function EditSheetForm<T extends Record<string, unknown>>({
               return (
                 <label
                   key={field.key}
-                  className="flex items-center gap-3 p-3 bg-white border border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50 transition-colors"
+                  id={field.key}
+                  className="flex items-center gap-3 p-3 bg-white border border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50 transition-colors scroll-mt-20"
                 >
                   <input
                     type="checkbox"
@@ -523,7 +565,7 @@ function EditSheetForm<T extends Record<string, unknown>>({
                       </h4>
                     </div>
                   )}
-                  <div className={field.type === "checkbox" ? "" : "space-y-2"}>
+                  <div id={field.key} className={field.type === "checkbox" ? "" : "space-y-2 scroll-mt-20"}>
                     {field.type !== "checkbox" && (
                       <Label
                         htmlFor={field.key}

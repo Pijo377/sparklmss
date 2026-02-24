@@ -1,4 +1,4 @@
-import  { useState, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { Edit2, Plus, CheckCircle, XCircle } from "lucide-react";
 import { DataTable } from "@/features/manageleads/ui/data-table/DataTable";
 import { EditSheet } from "@/features/manageleads/ui/edit-sheet/EditSheet";
@@ -9,7 +9,7 @@ import type { Product } from "@/features/manageleads/config/productconfig";
 
 // Mock Data
 const initialData: Product[] = [
-    { id: "1", productType: "CAB/CSO", productName: "CSO2025jultesting", interestRate: 10.00, loanAgreementName: "CAB_CSO_Loanagreement.html", nsfFee: 0.00, lateFee: 0.00, paymentFrequency: "Monthly", softReturnCount: "0", isActive: true, isOriginationFeeActive: false, originationFeeAmount: 0, isNSFFeeActive: false, nsfFeeAmount: 0, isLateFeeActive: false, lateFeeAmount: 0, onlyCABCSO: true, featureOrder: [{ id: "f1", label: "Delinquent Principal" }, { id: "f2", label: "Current Principal" }, { id: "f3", label: "Delinquent Interest" }, { id: "f4", label: "Deferred Interest" }, { id: "f5", label: "Deferred Principal" }, { id: "f6", label: "Fees" },{ id: "f7", label: "Feess" },{ id: "f8", label: "Fees" },{ id: "f9", label: "Fees" },{ id: "f10", label: "Fees" },] },
+    { id: "1", productType: "CAB/CSO", productName: "CSO2025jultesting", interestRate: 10.00, loanAgreementName: "CAB_CSO_Loanagreement.html", nsfFee: 0.00, lateFee: 0.00, paymentFrequency: "Monthly", softReturnCount: "0", isActive: true, isOriginationFeeActive: false, originationFeeAmount: 0, isNSFFeeActive: false, nsfFeeAmount: 0, isLateFeeActive: false, lateFeeAmount: 0, onlyCABCSO: true, featureOrder: [{ id: "f1", label: "Delinquent Principal" }, { id: "f2", label: "Current Principal" }, { id: "f3", label: "Delinquent Interest" }, { id: "f4", label: "Deferred Interest" }, { id: "f5", label: "Deferred Principal" }, { id: "f6", label: "Fees" }, { id: "f7", label: "Feess" }, { id: "f8", label: "Fees" }, { id: "f9", label: "Fees" }, { id: "f10", label: "Fees" },] },
     { id: "2", productType: "CAB/CSO", productName: "FggvyProduct", interestRate: 10.00, loanAgreementName: "CAB_CSO_Loanagreement.html", nsfFee: 7.50, lateFee: 0.00, paymentFrequency: "Monthly", softReturnCount: "1", isActive: true, isOriginationFeeActive: true, originationFeeAmount: 33.33, isNSFFeeActive: true, nsfFeeAmount: 7.50, isLateFeeActive: false, lateFeeAmount: 0, onlyCABCSO: true, featureOrder: [{ id: "f1", label: "Delinquent Principal" }, { id: "f2", label: "Current Principal" }, { id: "f3", label: "Delinquent Interest" }, { id: "f4", label: "Deferred Interest" }, { id: "f5", label: "Deferred Principal" }, { id: "f6", label: "Fees" }] },
     { id: "3", productType: "Installment", productName: "PDWI_MN_5", interestRate: 5.00, loanAgreementName: "Installment_Loanagreement.html", nsfFee: 25.00, lateFee: 0.00, paymentFrequency: "Bi-Weekly", softReturnCount: "2", isActive: true, isOriginationFeeActive: false, originationFeeAmount: 0, isNSFFeeActive: true, nsfFeeAmount: 25.00, isLateFeeActive: false, lateFeeAmount: 0, onlyCABCSO: false, featureOrder: [{ id: "f1", label: "Delinquent Principal" }, { id: "f2", label: "Current Principal" }, { id: "f3", label: "Delinquent Interest" }, { id: "f4", label: "Deferred Interest" }, { id: "f5", label: "Deferred Principal" }, { id: "f6", label: "Fees" }] },
     { id: "4", productType: "Installment", productName: "PDSC_MN_8.75", interestRate: 8.75, loanAgreementName: "Installment_Loanagreement.html", nsfFee: 25.00, lateFee: 0.00, paymentFrequency: "Bi-Weekly", softReturnCount: "0", isActive: true, isOriginationFeeActive: false, originationFeeAmount: 0, isNSFFeeActive: true, nsfFeeAmount: 25.00, isLateFeeActive: false, lateFeeAmount: 0, onlyCABCSO: false, featureOrder: [{ id: "f1", label: "Delinquent Principal" }, { id: "f2", label: "Current Principal" }, { id: "f3", label: "Delinquent Interest" }, { id: "f4", label: "Deferred Interest" }, { id: "f5", label: "Deferred Principal" }, { id: "f6", label: "Fees" }] },
@@ -19,6 +19,18 @@ const initialData: Product[] = [
     { id: "8", productType: "Installment", productName: "PDIN_MN_21", interestRate: 21.00, loanAgreementName: "Installment_Loanagreement.html", nsfFee: 25.00, lateFee: 0.00, paymentFrequency: "Monthly", softReturnCount: "0", isActive: true, isOriginationFeeActive: false, originationFeeAmount: 0, isNSFFeeActive: true, nsfFeeAmount: 25.00, isLateFeeActive: false, lateFeeAmount: 0, onlyCABCSO: false, featureOrder: [{ id: "f1", label: "Delinquent Principal" }, { id: "f2", label: "Current Principal" }, { id: "f3", label: "Delinquent Interest" }, { id: "f4", label: "Deferred Interest" }, { id: "f5", label: "Deferred Principal" }, { id: "f6", label: "Fees" }] },
     { id: "9", productType: "Installment", productName: "PDAR_MN_17", interestRate: 17.00, loanAgreementName: "Installment_Loanagreement.html", nsfFee: 25.00, lateFee: 0.00, paymentFrequency: "Monthly", softReturnCount: "0", isActive: true, isOriginationFeeActive: false, originationFeeAmount: 0, isNSFFeeActive: true, nsfFeeAmount: 25.00, isLateFeeActive: false, lateFeeAmount: 0, onlyCABCSO: false, featureOrder: [{ id: "f1", label: "Delinquent Principal" }, { id: "f2", label: "Current Principal" }, { id: "f3", label: "Delinquent Interest" }, { id: "f4", label: "Deferred Interest" }, { id: "f5", label: "Deferred Principal" }, { id: "f6", label: "Fees" }] },
     { id: "10", productType: "Installment", productName: "PDMO_BWSM_400", interestRate: 400.00, loanAgreementName: "Installment_Loanagreement.html", nsfFee: 25.00, lateFee: 0.00, paymentFrequency: "Weekly", softReturnCount: "1", isActive: true, isOriginationFeeActive: false, originationFeeAmount: 0, isNSFFeeActive: true, nsfFeeAmount: 25.00, isLateFeeActive: false, lateFeeAmount: 0, onlyCABCSO: false, featureOrder: [{ id: "f1", label: "Delinquent Principal" }, { id: "f2", label: "Current Principal" }, { id: "f3", label: "Delinquent Interest" }, { id: "f4", label: "Deferred Interest" }, { id: "f5", label: "Deferred Principal" }, { id: "f6", label: "Fees" }] },
+];
+
+// Utility to convert number to string without scientific notation
+const toNonExponential = (num: any) => {
+    if (typeof num !== 'number') return String(num ?? "");
+    return num.toLocaleString('en-US', { useGrouping: false, maximumFractionDigits: 20 });
+};
+
+const fieldsToNumber = [
+    "interestRate", "apr", "minimumAmount", "loanPeriodMonths",
+    "loanPayPeriodMonths", "drawPeriodMonths", "cabCsoInstallmentFeeValueNumber",
+    "loanDurationMin", "loanDurationMax", "principalPaymentInterest", "extensionInterest"
 ];
 
 const ProductPage = () => {
@@ -36,21 +48,38 @@ const ProductPage = () => {
 
     // Handle Edit Action
     const handleEdit = useCallback((item: Product) => {
+        // Convert numbers to non-scientific strings for the form
+        const formattedData = { ...item } as any;
+        fieldsToNumber.forEach(field => {
+            if (typeof formattedData[field] === 'number') {
+                formattedData[field] = toNonExponential(formattedData[field]);
+            }
+        });
+
         setEditSheet({
             open: true,
             mode: "edit",
-            data: item,
+            data: formattedData as Product,
         });
     }, []);
 
     // Handle Save Action
     const handleSave = useCallback((formData: Product) => {
+        // Convert strings back to numbers before saving for numeric fields
+        const dataToSave = { ...formData } as any;
+        fieldsToNumber.forEach(field => {
+            if (dataToSave[field] !== undefined && dataToSave[field] !== null && dataToSave[field] !== "") {
+                const val = String(dataToSave[field]).replace(/,/g, '');
+                dataToSave[field] = isNaN(Number(val)) ? 0 : Number(val);
+            }
+        });
+
         if (editSheet.mode === "add") {
             const newId = Math.max(...data.map(item => parseInt(item.id)), 0) + 1;
-            setData((prev) => [...prev, { ...formData, id: String(newId), isActive: true }]);
+            setData((prev) => [...prev, { ...dataToSave, id: String(newId), isActive: true }]);
         } else if (editSheet.mode === "edit" && editSheet.data) {
             setData((prev) =>
-                prev.map((item) => (item.id === editSheet.data?.id ? { ...formData, id: item.id } : item))
+                prev.map((item) => (item.id === editSheet.data?.id ? { ...dataToSave, id: item.id } : item))
             );
         }
         setEditSheet({ open: false, mode: "edit", data: null });

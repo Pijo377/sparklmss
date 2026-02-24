@@ -48,100 +48,295 @@ export const columns: ColumnDef<Campaign>[] = [
 ];
 
 export const editSheetFields: EditSheetField[] = [
-    { key: "campaignName", label: "Campaign Name", type: "text", required: true, placeholder: "Enter Campaign Name" },
-    { key: "userName", label: "User Name", type: "text", required: true, placeholder: "Enter User Name" },
-    { key: "password", label: "Password", type: "password", required: true, placeholder: "Enter Password" },
-    { key: "maxHourlyLead", label: "Max Hourly Lead", type: "number", required: true, min: 0, placeholder: "Enter Max Hourly Lead", validate: (val) => Number(val) < 0 ? "Must be positive" : null },
+    // 1️⃣ Campaign Name
     {
-        key: "maxDailyLeads",
-        label: "Max Daily Leads",
-        type: "number",
+        key: "campaignName",
+        label: "Campaign Name",
+        type: "text",
         required: true,
-        min: 0,
-        placeholder: "Enter Max Daily Leads",
+        maxLength: 25,
+        placeholder: "Enter Campaign Name",
         validate: (val) => {
-            if (Number(val) < 0) return "Must be positive";
+            const s = String(val ?? "");
+            if (s.trim().length === 0) return "* Please enter Campaign Name.";
+            if (s.length > 0 && s.trim().length === 0) return "* Please enter  Campaign Name."; // This is for empty space specifically in Angular logic
             return null;
         }
     },
-    { key: "minLoanAmount", label: "Min Loan Amount", type: "number", required: true, min: 0, placeholder: "Enter Min Loan Amount", validate: (val) => Number(val) < 0 ? "Must be positive" : null },
+    // 2️⃣ User Name
     {
-        key: "maxLoanAmount",
-        label: "Max Loan Amount",
-        type: "number",
+        key: "userName",
+        label: "User Name",
+        type: "text",
         required: true,
-        min: 0,
-        placeholder: "Enter Max Loan Amount",
-        validate: (val, data) => {
-            if (Number(val) < 0) return "Must be positive";
-            if (Number(val) < Number(data.minLoanAmount)) return "Cannot be less than Min Loan Amount";
+        maxLength: 10,
+        placeholder: "Enter User Name",
+        validate: (val) => {
+            const s = String(val ?? "");
+            if (s.trim().length === 0) return "* Please enter User Name.";
+            if (s.length > 0 && s.trim().length === 0) return "* Please enter  User Name.";
             return null;
         }
     },
-    { key: "firstPaymentMinDuration", label: "First Payment Min Duration", type: "number", required: true, min: 0, placeholder: "Enter Min Duration", validate: (val) => Number(val) < 0 ? "Must be positive" : null },
+    // 3️⃣ Password
     {
-        key: "firstPaymentMaxDuration",
-        label: "First Payment Max Duration",
-        type: "number",
+        key: "password",
+        label: "Password",
+        type: "password",
         required: true,
-        min: 0,
-        placeholder: "Enter Max Duration",
-        validate: (val, data) => {
-            if (Number(val) < 0) return "Must be positive";
-            if (Number(val) < Number(data.firstPaymentMinDuration)) return "Cannot be less than Min Duration";
+        maxLength: 32,
+        placeholder: "Enter Password",
+        validate: (val) => {
+            const s = String(val ?? "");
+            if (s.trim().length === 0) return "* Please enter Password.";
+            if (s.length > 0 && s.trim().length === 0) return "* Please enter Password.";
             return null;
         }
     },
-    { key: "loanToIncomeRatio", label: "Loan to Income Ratio", type: "number", required: true, min: 0, placeholder: "Enter Ratio", validate: (val) => Number(val) < 0 ? "Must be positive" : null },
-    { key: "isAchCoolOffNeeded", label: "Is ACH Cool-Off Needed?", type: "checkbox" },
-    {
-        key: "achCoolOffDays",
-        label: "ACH Cool-Off Days",
-        type: "number",
-        hiddenIf: (data: Record<string, any>) => !data.isAchCoolOffNeeded,
-        placeholder: "Enter Days"
-    },
-    { key: "leadCost", label: "Lead Cost", type: "number", required: true, min: 0, placeholder: "Enter Lead Cost", validate: (val) => Number(val) < 0 ? "Must be positive" : null },
-    {
-        key: "autoOriginateGroup",
-        label: "Auto Originate Group",
-        type: "select",
-        options: [{ label: "Group A", value: "Group A" }, { label: "Group B", value: "Group B" }],
-        required: true
-    },
-    {
-        key: "bureauGroupName",
-        label: "Bureau Group Name",
-        type: "select",
-        options: [{ label: "Bureau A", value: "Bureau A" }, { label: "Bureau B", value: "Bureau B" }],
-        required: true
-    },
-    {
-        key: "movePayDateOnHoliday",
-        label: "Move Pay Date on Holiday",
-        type: "select",
-        options: [{ label: "Before", value: "Before" }, { label: "After", value: "After" }],
-        required: true
-    },
-    { key: "sellRejectedLeads", label: "Sell Rejected Leads", type: "checkbox" },
-    { key: "active", label: "Is this Campaign active?", type: "checkbox" },
+    // 4️⃣ Campaign Type
     {
         key: "campaignType",
         label: "Campaign Type",
         type: "select",
-        options: [{ label: "Type A", value: "Type A" }, { label: "Type B", value: "Type B" }],
+        options: [
+            { label: "–Select–", value: "0" },
+            { label: "Internal", value: "i" },
+            { label: "External", value: "e" },
+        ],
+        required: true,
+        validate: (val) => {
+            if (String(val) === "0" || !val) return "* Please select the Campaign Type.";
+            return null;
+        }
+    },
+    // 5️⃣ Max Hourly Lead
+    {
+        key: "maxHourlyLead",
+        label: "Max Hourly Lead",
+        type: "text",
+        required: true,
+        maxLength: 25,
+        format: (val: string) => val.replace(/\D/g, ""),
+        placeholder: "Enter Max Hourly Lead",
+        validate: (val) => {
+            if (val === "" || val === null || val === undefined) return "* Please enter Max Hourly Leads.";
+            const n = Number(val);
+            if (Number.isFinite(n) && n < 0) return "* Please enter Max Hourly Leads.";
+            return null;
+        }
+    },
+    // 6️⃣ Max Daily Leads
+    {
+        key: "maxDailyLeads",
+        label: "Max Daily Leads",
+        type: "text",
+        required: true,
+        maxLength: 25,
+        format: (val: string) => val.replace(/\D/g, ""),
+        placeholder: "Enter Max Daily Leads",
+        validate: (val) => {
+            if (val === "" || val === null || val === undefined) return "* Please enter Max Daily Leads.";
+            const n = Number(val);
+            if (Number.isFinite(n) && n < 0) return "* Please enter Max Daily Leads.";
+            return null;
+        }
+    },
+    // 7️⃣ Min Loan Amount
+    {
+        key: "minLoanAmount",
+        label: "Min Loan Amount",
+        type: "currency",
+        required: true,
+        max: 9999999999,
+        maxLength: 32,
+        placeholder: "Enter Min Loan Amount",
+        validate: (val) => {
+            if (val === "" || val === null || val === undefined) return "* Please enter Min Loan Amount.";
+            const n = Number(String(val).replace(/,/g, ""));
+            if (Number.isFinite(n) && n < 0) return "* Please enter Min Loan Amount.";
+            return null;
+        }
+    },
+    // 8️⃣ Max Loan Amount
+    {
+        key: "maxLoanAmount",
+        label: "Max Loan Amount",
+        type: "currency",
+        required: true,
+        max: 9999999999,
+        maxLength: 32,
+        placeholder: "Enter Max Loan Amount",
+        validate: (val, data) => {
+            if (val === "" || val === null || val === undefined) return "* Please enter Max Loan Amount.";
+            const n = Number(String(val).replace(/,/g, ""));
+            if (Number.isFinite(n) && n < 0) return "* Please enter Max Loan Amount.";
+            const minVal = Number(String(data.minLoanAmount).replace(/,/g, ""));
+            if (Number.isFinite(n) && Number.isFinite(minVal) && n <= minVal)
+                return "* Max Loan Amount must be greater than Min Loan Amount.";
+            return null;
+        }
+    },
+    // 9️⃣ First Payment Min Duration
+    {
+        key: "firstPaymentMinDuration",
+        label: "First Payment Min Duration",
+        type: "text",
+        required: true,
+        maxLength: 25,
+        format: (val: string) => val.replace(/\D/g, ""),
+        placeholder: "Enter Min Duration",
+        validate: (val) => {
+            if (val === "" || val === null || val === undefined) return "* Please enter First Payment Min Duration.";
+            const n = Number(val);
+            if (Number.isFinite(n) && n < 0) return "* Please enter First Payment Min Duration.";
+            return null;
+        }
+    },
+    // 1️⃣0️⃣ First Payment Max Duration
+    {
+        key: "firstPaymentMaxDuration",
+        label: "First Payment Max Duration",
+        type: "text",
+        required: true,
+        maxLength: 25,
+        format: (val: string) => val.replace(/\D/g, ""),
+        placeholder: "Enter Max Duration",
+        validate: (val, data) => {
+            if (val === "" || val === null || val === undefined) return "* Please enter First Payment Max Duration.";
+            const n = Number(val);
+            if (Number.isFinite(n) && n < 0) return "* Please enter First Payment Max Duration.";
+            const minVal = Number(data.firstPaymentMinDuration);
+            if (Number.isFinite(n) && Number.isFinite(minVal) && n <= minVal)
+                return "* First Payment Max Duration must be greater than First Payment Min Duration.";
+            return null;
+        }
+    },
+    // 1️⃣1️⃣ Loan to Income Ratio
+    {
+        key: "loanToIncomeRatio",
+        label: "Loan to Income Ratio",
+        type: "text",
+        required: true,
+        maxLength: 25,
+        format: (val) => val.replace(/[^\d.]/g, "").replace(/(\..*?)\..*/g, '$1'),
+        placeholder: "Enter Ratio (e.g. 50.000)",
+        validate: (val) => {
+            if (val === "" || val === null || val === undefined) return "* Please enter Loan to Income Ratio.";
+            const n = Number(val);
+            if (Number.isFinite(n) && n < 0) return "* Please enter Loan to Income Ratio.";
+            return null;
+        }
+    },
+    // 1️⃣2️⃣ Is ACH Cool-Off Needed?
+    { key: "isAchCoolOffNeeded", label: "Is ACH Cool-Off Needed?", type: "checkbox" },
+    // 1️⃣3️⃣ ACH Cool-Off Days
+    {
+        key: "achCoolOffDays",
+        label: "ACH Cool-Off Days",
+        type: "text",
+        maxLength: 25,
+        format: (val: string) => val.replace(/\D/g, ""),
+        hiddenIf: (data: Record<string, any>) => !data.isAchCoolOffNeeded,
+        placeholder: "Enter Days",
+        validate: (val, data) => {
+            if (!data.isAchCoolOffNeeded) return null; // skip validation when hidden
+            const s = String(val ?? "").trim();
+            if (s === "") return "* Please enter the Days";
+            const n = Number(val);
+            if (!Number.isFinite(n) || n < 0) return "* Please enter the Days";
+            return null;
+        }
+    },
+    // 1️⃣4️⃣ Lead Cost
+    {
+        key: "leadCost",
+        label: "Lead Cost",
+        type: "currency",
+        required: true,
+        max: 9999999999,
+        maxLength: 32,
+        placeholder: "Enter Lead Cost",
+        validate: (val) => {
+            if (val === "" || val === null || val === undefined) return "* Please enter the Lead Cost";
+            const n = Number(String(val).replace(/,/g, ""));
+            if (Number.isFinite(n) && n < 0) return "* Please enter the Lead Cost";
+            return null;
+        }
+    },
+    // 1️⃣5️⃣ Auto Originate Group
+    {
+        key: "autoOriginateGroup",
+        label: "Auto Originate Group",
+        type: "select",
+        options: [
+            { label: "–Select–", value: "0" },
+            { label: "Group A", value: "Group A" },
+            { label: "Group B", value: "Group B" },
+        ],
+        required: false,
+    },
+    // 1️⃣6️⃣ Bureau Group Name
+    {
+        key: "bureauGroupName",
+        label: "Bureau Group Name",
+        type: "select",
+        options: [
+            { label: "–Select–", value: "0" },
+            { label: "Bureau A", value: "Bureau A" },
+            { label: "Bureau B", value: "Bureau B" },
+        ],
+        required: false,
+    },
+    // 1️⃣7️⃣ Move Pay Date on Holiday
+    {
+        key: "movePayDateOnHoliday",
+        label: "Move Pay Date on Holiday",
+        type: "select",
+        options: [
+            { label: "Before", value: "B" },
+            { label: "After", value: "A" },
+        ],
         required: true
     },
+    // 1️⃣8️⃣ Sell Rejected Leads
+    { key: "sellRejectedLeads", label: "Sell Rejected Leads", type: "checkbox" },
+    // 1️⃣9️⃣ Is this Campaign active?
+    { key: "active", label: "Is this Campaign active?", type: "checkbox" },
+    // 2️⃣0️⃣ Description
     {
         key: "description",
         label: "Campaign Description",
         type: "textarea",
+        maxLength: 255,
         placeholder: "Enter Campaign Description"
     },
+    // 2️⃣1️⃣ Allocated Time for Submission (Schedule)
     {
         key: "submissionSchedule",
         label: "Allocated Time for Submission",
         type: "schedule",
+        validate: (val) => {
+            if (!Array.isArray(val)) return null;
 
+            const timeToMinutes = (time: string): number => {
+                if (!time) return 0;
+                const [h, m] = time.split(":").map(Number);
+                return h * 60 + m;
+            };
+
+            for (const entry of val) {
+                const start = timeToMinutes(entry.startTime);
+                const end = timeToMinutes(entry.endTime);
+
+                if (start >= end) {
+                    if (entry.day === "Monday") {
+                        return "* End Time must be greater than Start Time.";
+                    } else {
+                        return "* End Time must be greater that Start Time.";
+                    }
+                }
+            }
+            return null;
+        }
     }
 ];

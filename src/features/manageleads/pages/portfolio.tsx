@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { Edit2 } from "lucide-react";
 import { DataTable } from "@/features/manageleads/ui/data-table/DataTable";
 import { EditSheet } from "@/features/manageleads/ui/edit-sheet/EditSheet";
@@ -31,8 +31,12 @@ const Portfolio = () => {
 
     // Handle saving the edited data
     const handleSave = useCallback((formData: PortfolioData) => {
+        const processedData = {
+            ...formData,
+            withdrawLeadsAfter: Number(formData.withdrawLeadsAfter),
+        };
         setData((prev) =>
-            prev.map((item) => (item.id === editSheet.data?.id ? { ...formData, id: item.id } : item))
+            prev.map((item) => (item.id === editSheet.data?.id ? { ...processedData, id: item.id } : item))
         );
         setEditSheet({ open: false, data: null });
     }, [editSheet.data]);
@@ -47,7 +51,7 @@ const Portfolio = () => {
     ];
 
     return (
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 p-4">
             <h1 className="text-2xl font-semibold text-slate-900 shrink-0">Portfolio</h1>
 
             <TableCard>

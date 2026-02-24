@@ -10,13 +10,13 @@ export type PortfolioFieldFormatter = (value: string) => string;
 
 /* -------------------- Common Helpers -------------------- */
 
-const isBlank = (value: unknown) => {
+export const isBlank = (value: unknown) => {
   if (value === null || value === undefined) return true;
   if (typeof value === "string") return value.trim().length === 0;
   return false;
 };
 
-const digitsOnly = (value: unknown) =>
+export const digitsOnly = (value: unknown) =>
   String(value ?? "").replace(/\D/g, "");
 
 const compose =
@@ -46,14 +46,14 @@ export const formatPhoneNumber = (value: string): string => {
 const required =
   (label: string): PortfolioFieldValidator =>
     (value) =>
-      isBlank(value) ? `${label} is required.` : null;
+      isBlank(value) ? `*${label} is required` : null;
 
 const email =
   (label: string): PortfolioFieldValidator =>
     (value) => {
       const v = String(value ?? "").trim();
       const isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
-      return isValid ? null : `${label} must be a valid email address.`;
+      return isValid ? null : `* Please enter Valid Email.`;
     };
 
 const phone10 =
@@ -61,7 +61,7 @@ const phone10 =
     (value) => {
       const digits = digitsOnly(value);
       if (digits.length !== 10)
-        return `${label} must be a 10 digit number.`;
+        return `*${label} is required`;
       return null;
     };
 
@@ -75,7 +75,7 @@ const zipUS =
         /^\d{5}-\d{4}$/.test(v);
       return isValid
         ? null
-        : `${label} must be 5 digits (or 9 digits / 5-4).`;
+        : `*Zip is required`;
     };
 
 const integerRange =
@@ -85,10 +85,10 @@ const integerRange =
         typeof value === "number" ? value : Number(value);
 
       if (!Number.isFinite(num) || !Number.isInteger(num))
-        return `${label} must be a whole number.`;
+        return `*${label} is required`;
 
       if (num < min || num > max)
-        return `${label} must be between ${min} and ${max}.`;
+        return `*${label} must be between ${min} and ${max}.`;
 
       return null;
     };
@@ -97,63 +97,50 @@ const requiredSelect =
   (label: string): PortfolioFieldValidator =>
     (value) =>
       String(value ?? "").trim() === ""
-        ? `${label} is required.`
+        ? `*${label} is required`
         : null;
 
 /* -------------------- Portfolio Validators -------------------- */
 
 export const portfolioValidators = {
-  portfolioName: required("Portfolio Name"),
+  portfolioName: (value: unknown) => isBlank(value) ? "*Portfolio Name is required" : null,
 
-  address: required("Address"),
+  address: (value: unknown) => isBlank(value) ? "*Address is required" : null,
 
-  state: requiredSelect("State"),
+  state: (value: unknown) => isBlank(value) ? "*State is required" : null,
 
-  city: required("City"),
+  city: (value: unknown) => isBlank(value) ? "*City is required" : null,
 
-  zip: compose(
-    required("Zip"),
-    zipUS("Zip")
-  ),
+  zip: (value: unknown) => isBlank(value) ? "*Zip is required" : null,
 
-  phone: compose(
-    required("Phone Number"),
-    phone10("Phone Number")
-  ),
+  phone: (value: unknown) => isBlank(value) ? "*PhoneNumber is required" : null,
 
-  fax: compose(
-    required("Fax"),
-    phone10("Fax")
-  ),
+  fax: (value: unknown) => isBlank(value) ? "*Fax is required" : null,
 
   email: compose(
-    required("Email"),
+    (value: unknown) => isBlank(value) ? "*Email is required" : null,
     email("Email")
   ),
 
-  timeZone: requiredSelect("Time Zone"),
+  timeZone: (value: unknown) => isBlank(value) ? "*TimeZone is required" : null,
 
-  maxTransactionHour: compose(
-    required("Max Transaction Hour"),
-    integerRange("Max Transaction Hour", 0, 23)
-  ),
+  maxTransactionHour: (value: unknown) => isBlank(value) ? "*Required" : null,
 
-  maxTransactionMinute: compose(
-    required("Max Transaction Minute"),
-    integerRange("Max Transaction Minute", 0, 59)
-  ),
+  maxTransactionMinute: (value: unknown) => isBlank(value) ? "*Required" : null,
 
-  movePayDateOnHoliday: requiredSelect("Move Pay Date on Holiday"),
+  movePayDateOnHoliday: (value: unknown) => isBlank(value) ? "*Move Pay Date is required" : null,
 
-  withdrawLeadsAfter: compose(
-    required("Withdraw Leads After"),
-    integerRange("Withdraw Leads After", 1, 365)
-  ),
+  withdrawLeadsAfter: (value: unknown) => {
+    if (isBlank(value)) return "*Required";
+    const num = Number(value);
+    if (isNaN(num) || num < 1 || num > 365) return "*Must be between 1 and 365";
+    return null;
+  },
 
   preferredLanguages: (value: unknown) => {
     const arr = Array.isArray(value) ? value : [];
     if (arr.length === 0)
-      return "At least one Preferred Language must be selected.";
+      return "*Required";
     return null;
   },
 };

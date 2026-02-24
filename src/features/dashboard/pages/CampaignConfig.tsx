@@ -64,26 +64,70 @@ const ALL_STATES = [
   'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming'
 ];
 
-const App: React.FC = () => {
-  const [toggles, setToggles] = useState({
-    denyMilitary: false, mustBeEmployed: true, notInBankruptcy: true, checkBadEmployer: true,
-    mustHaveDirectDeposit: true, mustHaveChecking: true, checkBadABA: true, validABAScreening: true,
-    denyMonthlyPaid: false, denyWeeklyPaid: false, checkDLNumber: true, checkDLState: true,
-    checkState: true, checkBadSubAffiliateID: true, existingCustomerBypass: false,
-    rejectExisting: false, denyUnprocessedLoan: true, allowActiveCustomers: true,
-    badLoanStatus: true, configActive: true,
-  });
+// Mock campaign data – when a campaign is selected, these values populate the form
+const CAMPAIGN_DATA: Record<string, {
+  toggles: Record<string, boolean>;
+  inputs: Record<string, string | number>;
+  allowedStates: string[];
+}> = {
+  CMPSC_WK_8_75: { toggles: { denyMilitary: false, mustBeEmployed: true, notInBankruptcy: true, checkBadEmployer: true, mustHaveDirectDeposit: true, mustHaveChecking: true, checkBadABA: true, validABAScreening: true, denyMonthlyPaid: false, denyWeeklyPaid: false, checkDLNumber: true, checkDLState: true, checkState: true, checkBadSubAffiliateID: true, existingCustomerBypass: false, rejectExisting: false, denyUnprocessedLoan: true, allowActiveCustomers: true, badLoanStatus: true, configActive: true }, inputs: { minMonthlySalary: 2000, maxMonthlySalary: 10000, minAge: 18, acLengthMax: 365, paymentCount: 12, rejectedLoanDays: 30 }, allowedStates: ['California', 'Texas', 'New York', 'Florida', 'Illinois'] },
+  CMPSC_BWSM_8_75: { toggles: { denyMilitary: false, mustBeEmployed: true, notInBankruptcy: true, checkBadEmployer: true, mustHaveDirectDeposit: true, mustHaveChecking: true, checkBadABA: true, validABAScreening: true, denyMonthlyPaid: false, denyWeeklyPaid: false, checkDLNumber: true, checkDLState: true, checkState: true, checkBadSubAffiliateID: true, existingCustomerBypass: false, rejectExisting: false, denyUnprocessedLoan: true, allowActiveCustomers: true, badLoanStatus: true, configActive: true }, inputs: { minMonthlySalary: 1500, maxMonthlySalary: 8000, minAge: 21, acLengthMax: 180, paymentCount: 6, rejectedLoanDays: 45 }, allowedStates: ['California', 'Texas', 'Florida'] },
+};
 
-  const [inputs, setInputs] = useState<Record<string, string | number>>({
-    minMonthlySalary: 2000, maxMonthlySalary: 10000, minAge: 18,
-    acLengthMax: 365, paymentCount: 12, rejectedLoanDays: 30,
-  });
+// Default empty toggles (all unchecked)
+const DEFAULT_TOGGLES = {
+  denyMilitary: false, mustBeEmployed: false, notInBankruptcy: false, checkBadEmployer: false,
+  mustHaveDirectDeposit: false, mustHaveChecking: false, checkBadABA: false, validABAScreening: false,
+  denyMonthlyPaid: false, denyWeeklyPaid: false, checkDLNumber: false, checkDLState: false,
+  checkState: false, checkBadSubAffiliateID: false, existingCustomerBypass: false,
+  rejectExisting: false, denyUnprocessedLoan: false, allowActiveCustomers: false,
+  badLoanStatus: false, configActive: false,
+};
+
+// Default empty inputs
+const DEFAULT_INPUTS: Record<string, string | number> = {
+  minMonthlySalary: '', maxMonthlySalary: '', minAge: '',
+  acLengthMax: '', paymentCount: '', rejectedLoanDays: '',
+};
+
+const App: React.FC = () => {
+  const [selectedCampaign, setSelectedCampaign] = useState<string>('');
+
+  const [toggles, setToggles] = useState({ ...DEFAULT_TOGGLES });
+
+  const [inputs, setInputs] = useState<Record<string, string | number>>({ ...DEFAULT_INPUTS });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  const [allowedStates, setAllowedStates] = useState(['California', 'Texas', 'New York', 'Florida', 'Illinois']);
-  const [deniedStates, setDeniedStates] = useState(ALL_STATES.filter(s => !['California', 'Texas', 'New York', 'Florida', 'Illinois'].includes(s)));
+  const [allowedStates, setAllowedStates] = useState<string[]>([]);
+  const [deniedStates, setDeniedStates] = useState<string[]>(ALL_STATES);
+
+  const handleCampaignChange = (value: string) => {
+    setSelectedCampaign(value);
+    setIsSubmitted(false);
+    setErrors({});
+    const data = CAMPAIGN_DATA[value];
+    if (data) {
+      setToggles(data.toggles as typeof toggles);
+      setInputs({ ...data.inputs });
+      setAllowedStates([...data.allowedStates]);
+      setDeniedStates(ALL_STATES.filter(s => !data.allowedStates.includes(s)));
+    } else {
+      // Fallback: populate with generic defaults for campaigns not in CAMPAIGN_DATA
+      setToggles({
+        denyMilitary: false, mustBeEmployed: true, notInBankruptcy: true, checkBadEmployer: true,
+        mustHaveDirectDeposit: true, mustHaveChecking: true, checkBadABA: true, validABAScreening: true,
+        denyMonthlyPaid: false, denyWeeklyPaid: false, checkDLNumber: true, checkDLState: true,
+        checkState: true, checkBadSubAffiliateID: true, existingCustomerBypass: false,
+        rejectExisting: false, denyUnprocessedLoan: true, allowActiveCustomers: true,
+        badLoanStatus: true, configActive: true,
+      });
+      setInputs({ minMonthlySalary: 2000, maxMonthlySalary: 10000, minAge: 18, acLengthMax: 365, paymentCount: 12, rejectedLoanDays: 30 });
+      setAllowedStates(['California', 'Texas', 'New York', 'Florida', 'Illinois']);
+      setDeniedStates(ALL_STATES.filter(s => !['California', 'Texas', 'New York', 'Florida', 'Illinois'].includes(s)));
+    }
+  };
 
   const handleToggle = (key: keyof typeof toggles) => setToggles(prev => ({ ...prev, [key]: !prev[key] }));
 
@@ -100,7 +144,7 @@ const App: React.FC = () => {
 
     // Minimum Monthly Salary
     if (inputs.minMonthlySalary === "") {
-      newErrors.minMonthlySalary = "* Please enter Minimum Monthly Salary.";
+      newErrors.minMonthlySalary = "*Enter Minimum Monthly salary between $300.00 and $30,000.00.";
       isValid = false;
     } else if (isNaN(minSal) || minSal < 300 || minSal > 30000) {
       newErrors.minMonthlySalary = "*Enter Minimum Monthly salary between $300.00 and $30,000.00.";
@@ -109,7 +153,7 @@ const App: React.FC = () => {
 
     // Maximum Monthly Salary
     if (inputs.maxMonthlySalary === "") {
-      newErrors.maxMonthlySalary = "* Please enter Maximum Monthly Salary.";
+      newErrors.maxMonthlySalary = "* Enter Maximum Monthly salary between $300.00 and $30,000.00.";
       isValid = false;
     } else if (isNaN(maxSal) || maxSal < 300 || maxSal > 30000) {
       newErrors.maxMonthlySalary = "* Enter Maximum Monthly salary between $300.00 and $30,000.00.";
@@ -121,7 +165,10 @@ const App: React.FC = () => {
 
     // Minimum Age Limit
     if (inputs.minAge === "") {
-      newErrors.minAge = "* Please enter the min age limit";
+      newErrors.minAge = "* enter the min age limit";
+      isValid = false;
+    } else if (Number(inputs.minAge) < 18) {
+      newErrors.minAge = "* age should be 18 or above.";
       isValid = false;
     }
 
@@ -177,7 +224,7 @@ const App: React.FC = () => {
 
             <div className="w-full sm:w-64">
               <div className="w-full sm:w-64">
-                <Select>
+                <Select value={selectedCampaign || undefined} onValueChange={handleCampaignChange}>
                   <SelectTrigger
                     className="
     w-full 
@@ -228,9 +275,10 @@ const App: React.FC = () => {
             </div>
           </div>
 
-          <div className="flex items-center gap-3 self-end sm:self-auto">
-            <Button
-              className="
+          {selectedCampaign && (
+            <div className="flex items-center gap-3 self-end sm:self-auto">
+              <Button
+                className="
       h-9 
       px-5 
       bg-green-600 
@@ -240,13 +288,13 @@ const App: React.FC = () => {
       font-medium 
       rounded-md
     "
-              onClick={handleSubmit}
-            >
-              Copy/Update
-            </Button>
+                onClick={handleSubmit}
+              >
+                Copy/Update
+              </Button>
 
-            <Button
-              className="
+              <Button
+                className="
       h-9 
       px-5 
       bg-white 
@@ -258,10 +306,11 @@ const App: React.FC = () => {
       font-medium 
       rounded-md
     "
-            >
-              Cancel
-            </Button>
-          </div>
+              >
+                Cancel
+              </Button>
+            </div>
+          )}
 
         </div>
 
@@ -400,7 +449,7 @@ const App: React.FC = () => {
                       {isSubmitted && errors.paymentCount && <div className="text-red-500 text-xs mt-1">{errors.paymentCount}</div>}
                     </div>
                     <div>
-                      <InputLabel>Rejected loan in the last (Days)</InputLabel>
+                      <InputLabel>CUS.Rejected loan in the last (Days)</InputLabel>
                       <Input
                         className={`h-8 text-xs ${isSubmitted && errors.rejectedLoanDays ? 'border-red-500' : ''}`}
                         type="number"

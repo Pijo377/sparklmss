@@ -88,6 +88,7 @@ export const editSheetFields: EditSheetField[] = [
         type: "text",
         required: true,
         placeholder: "Enter code name",
+
     },
     {
         key: "interestBy",
@@ -105,6 +106,8 @@ export const editSheetFields: EditSheetField[] = [
         type: "text",
         required: true,
         placeholder: "0.00",
+        format: (val) => val.replace(/[^\d.]/g, "").replace(/(\..*?)\..*/g, '$1'),
+
     },
     {
         key: "applicableTo",

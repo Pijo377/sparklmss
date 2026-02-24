@@ -76,7 +76,7 @@ export const editSheetFields: EditSheetField[] = [
         ],
         placeholder: "Select Product Type",
         required: true,
-        validate: (value) => !value ? "Product Type is required" : null
+        validate: (value) => !value ? "* Please select Product Type." : null
     },
     {
         key: "productName",
@@ -84,24 +84,29 @@ export const editSheetFields: EditSheetField[] = [
         type: "text",
         placeholder: "Enter Product Name",
         required: true,
-        validate: (value) => !value ? "Product Name is required" : null
+
+        validate: (value) => !value ? "* Please enter Product Name." : null
     },
     {
         key: "interestRate",
         label: "Interest Rate [%]",
-        type: "number",
+        type: "text",
         placeholder: "Enter Interest Rate",
+
+        format: (val) => val.replace(/[^\d.]/g, "").replace(/(\..*?)\..*/g, '$1'),
         hiddenIf: (data: any) => data.productType === 'installment' || data.productType === 'autotitle',
-        validate: (value) => Number(value) < 0 ? "Interest Rate must be 0 or greater" : null
+        validate: (value) => !value ? "* Please enter Interest Rate." : (Number(value) < 0 ? "* Please enter Interest Rate." : null)
     },
-     {
+    {
         key: "apr",
         label: "APR [%]",
-        type: "number",
+        type: "text",
         placeholder: "Enter APR",
         required: false,
+
+        format: (val) => val.replace(/[^\d.]/g, "").replace(/(\..*?)\..*/g, '$1'),
         hiddenIf: (data: any) => data.productType === 'payday' || data.productType === 'revolving_line_of_credit' || data.productType === 'cab_cso',
-        validate: (value: any) => value !== undefined && value !== null && Number(value) < 0 ? "APR must be 0 or greater" : null
+        validate: (value: any) => !value ? "* Please enter Interest Rate." : (Number(value) < 0 ? "* Please enter Interest Rate." : null)
     },
     {
         key: "loanAgreementName",
@@ -112,7 +117,7 @@ export const editSheetFields: EditSheetField[] = [
             { value: "Installment_Loanagreement.html", label: "Installment_Loanagreement.html" },
         ],
         required: true,
-        validate: (value) => !value ? "Loan Agreement Name is required" : null
+        validate: (value) => !value ? "* Please select the Loan Agreement Name." : null
     },
     {
         key: "paymentFrequency",
@@ -124,18 +129,25 @@ export const editSheetFields: EditSheetField[] = [
             { value: "Monthly", label: "Monthly" },
             { value: "Semi-Monthly", label: "Semi-Monthly" },
         ],
-        required: true,
-        validate: (value) => !value ? "Payment Frequency is required" : null
+        required: false,
+        validate: (value: any, data: any) => {
+            if ((data.productType === 'payday' || data.productType === 'autotitle') && !value) {
+                return "* Please select the Payment Frequency.";
+            }
+            return null;
+        }
     },
     {
         key: "softReturnCount",
         label: "Soft Return Count",
-        type: "number",
+        type: "text",
         placeholder: "Enter Soft Return Count",
         required: true,
-        validate: (value) => Number(value) < 0 ? "Soft Return Count must be 0 or greater" : null
+        maxLength: 25,
+        format: (val) => val.replace(/\D/g, ""),
+        validate: (value) => !value ? "* Please enter the Return Count Before Collection." : (Number(value) < 0 ? "* Please enter the Return Count Before Collection." : null)
     },
-      {
+    {
         key: "paymentDuringDrawingPeriod",
         label: "Payment During Drawing Period",
         type: "select",
@@ -147,18 +159,25 @@ export const editSheetFields: EditSheetField[] = [
         placeholder: "Select Payment Type",
         required: false,
         hiddenIf: (data: any) => data.productType !== 'revolving_line_of_credit',
+        validate: (value: any, data: any) => {
+            if (data.productType === 'revolving_line_of_credit' && !value) return "* Please Select Payment During Drawing Period";
+            return null;
+        }
     },
     {
         key: "minimumAmount",
         label: "Minimum Amount [%]",
-        type: "number",
+        type: "text",
         placeholder: "Enter Minimum Amount",
         required: false,
+
+        format: (val) => val.replace(/[^\d.]/g, "").replace(/(\..*?)\..*/g, '$1'),
         hiddenIf: (data: any) => data.productType !== 'revolving_line_of_credit' || data.paymentDuringDrawingPeriod !== 'Minimum Amount',
         validate: (value: any, data: any) => {
             if (data.productType === 'revolving_line_of_credit' && data.paymentDuringDrawingPeriod === 'Minimum Amount' && (value === undefined || value === null || value === '')) {
-                return "Minimum Amount is required";
+                return "* Please enter the Minimum Amount";
             }
+            if (value !== undefined && value !== null && Number(value) < 0) return "* Please enter the Minimum Amount";
             return null;
         }
     },
@@ -168,11 +187,14 @@ export const editSheetFields: EditSheetField[] = [
         type: "currency",
         placeholder: "Enter Fixed Amount",
         required: false,
+
         hiddenIf: (data: any) => data.productType !== 'revolving_line_of_credit' || data.paymentDuringDrawingPeriod !== 'Fixed Amount',
         validate: (value: any, data: any) => {
             if (data.productType === 'revolving_line_of_credit' && data.paymentDuringDrawingPeriod === 'Fixed Amount' && (value === undefined || value === null || value === '')) {
-                return "Fixed Amount is required";
+                return "* Please enter the Fixed Amount";
             }
+            const n = Number(String(value).replace(/,/g, ""));
+            if (Number.isFinite(n) && n < 0) return "* Please enter the Fixed Amount";
             return null;
         }
     },
@@ -182,35 +204,67 @@ export const editSheetFields: EditSheetField[] = [
         type: "currency",
         placeholder: "Enter Max Standing Amount",
         required: false,
+
         hiddenIf: (data: any) => data.productType !== 'revolving_line_of_credit',
-        validate: (value: any) => value !== undefined && value !== null && Number(value) < 0 ? "Max Standing Amount must be 0 or greater" : null
+        validate: (value: any, data: any) => {
+            if (data.productType === 'revolving_line_of_credit' && (value === undefined || value === null || value === '')) {
+                return "* Please enter the Max Standing Amount.";
+            }
+            const n = Number(String(value).replace(/,/g, ""));
+            if (value !== undefined && value !== null && Number.isFinite(n) && n < 0) return "* Please enter the Max Standing Amount.";
+            return null;
+        }
     },
     {
         key: "loanPeriodMonths",
         label: "Loan Period [Months]",
-        type: "number",
+        type: "text",
         placeholder: "Enter Loan Period",
         required: false,
+
+        format: (val) => val.replace(/\D/g, ""),
         hiddenIf: (data: any) => data.productType !== 'revolving_line_of_credit',
-        validate: (value: any) => value !== undefined && value !== null && Number(value) < 0 ? "Loan Period must be 0 or greater" : null
+        validate: (value: any, data: any) => {
+            if (data.productType === 'revolving_line_of_credit' && (value === undefined || value === null || value === '')) {
+                return "* Please enter Loan Period.";
+            }
+            if (value !== undefined && value !== null && Number(value) < 0) return "* Please enter Loan Period.";
+            return null;
+        }
     },
     {
         key: "loanPayPeriodMonths",
         label: "Loan Pay Period [Months]",
-        type: "number",
+        type: "text",
         placeholder: "Enter Loan Pay Period",
-        required: false,
+        required: true,
+
+        format: (val) => val.replace(/\D/g, ""),
         hiddenIf: (data: any) => data.productType !== 'revolving_line_of_credit',
-        validate: (value: any) => value !== undefined && value !== null && Number(value) < 0 ? "Loan Pay Period must be 0 or greater" : null
+        validate: (value: any, data: any) => {
+            if (data.productType === 'revolving_line_of_credit' && (value === undefined || value === null || value === '')) {
+                return "* Please enter Loan Pay Period.";
+            }
+            if (value !== undefined && value !== null && Number(value) < 0) return "* Please enter Loan Pay Period.";
+            return null;
+        }
     },
     {
         key: "drawPeriodMonths",
         label: "Draw Period [Months]",
-        type: "number",
+        type: "text",
         placeholder: "Enter Draw Period",
-        required: false,
+        required: true,
+
+        format: (val) => val.replace(/\D/g, ""),
         hiddenIf: (data: any) => data.productType !== 'revolving_line_of_credit',
-        validate: (value: any) => value !== undefined && value !== null && Number(value) < 0 ? "Draw Period must be 0 or greater" : null
+        validate: (value: any, data: any) => {
+            if (data.productType === 'revolving_line_of_credit' && (value === undefined || value === null || value === '')) {
+                return "* Please enter Drawing Period.";
+            }
+            if (value !== undefined && value !== null && Number(value) < 0) return "* Please enter Drawing Period.";
+            return null;
+        }
     },
     {
         key: "isApplicableForAutoTitle",
@@ -227,7 +281,7 @@ export const editSheetFields: EditSheetField[] = [
         hiddenIf: (data: any) => data.productType !== 'cab_cso',
     },
 
-   
+
     {
         key: "cabCsoType",
         label: "CAB/CSO Type",
@@ -252,6 +306,10 @@ export const editSheetFields: EditSheetField[] = [
         placeholder: "Select Fee Type",
         required: false,
         hiddenIf: (data: any) => data.productType !== 'cab_cso' || data.cabCsoType !== "Installment",
+        validate: (value: any, data: any) => {
+            if (data.productType === 'cab_cso' && data.cabCsoType === "Installment" && !value) return "* Required.";
+            return null;
+        }
     },
     {
         key: "cabCsoInstallmentFeeValueCurrency",
@@ -259,10 +317,11 @@ export const editSheetFields: EditSheetField[] = [
         type: "currency",
         placeholder: "Enter Value",
         required: false,
+        maxLength: 32,
         hiddenIf: (data: any) => data.productType !== 'cab_cso' || (data.cabCsoType !== "Installment" || data.cabCsoInstallmentFeeType !== "$"),
         validate: (value: any, data: any) => {
             if (data.cabCsoType === "Installment" && data.cabCsoInstallmentFeeType === "$" && (value === undefined || value === null || value === '')) {
-                return "Value is required";
+                return "* Required.";
             }
             return null;
         }
@@ -270,24 +329,33 @@ export const editSheetFields: EditSheetField[] = [
     {
         key: "cabCsoInstallmentFeeValueNumber",
         label: "Value",
-        type: "number",
+        type: "text",
         placeholder: "Enter Value",
         required: false,
+        maxLength: 25,
+        format: (val) => val.replace(/[^\d.]/g, "").replace(/(\..*?)\..*/g, '$1'),
         hiddenIf: (data: any) => data.productType !== 'cab_cso' || (data.cabCsoType !== "Installment" || (data.cabCsoInstallmentFeeType !== "%" && data.cabCsoInstallmentFeeType !== "#")),
         validate: (value: any, data: any) => {
             if (data.cabCsoType === "Installment" && (data.cabCsoInstallmentFeeType === "%" || data.cabCsoInstallmentFeeType === "#") && (value === undefined || value === null || value === '')) {
-                return "Value is required";
+                return "* Required.";
             }
             return null;
         }
     },
-   {
+    {
         key: "cabCsoFeePer100",
         label: "CAB/CSO Fee (Per 100$)",
         type: "currency",
         placeholder: "Enter Fee per 100$",
         required: false,
+        maxLength: 32,
         hiddenIf: (data: any) => data.productType !== 'cab_cso',
+        validate: (value: any, data: any) => {
+            if (data.productType === 'cab_cso' && (value === undefined || value === null || value === '')) {
+                return "* Please enter the CAB Fee Value.";
+            }
+            return null;
+        }
     },
     {
         key: "accrueInterestOnDeferredPayment",
@@ -317,7 +385,7 @@ export const editSheetFields: EditSheetField[] = [
         required: false,
         hiddenIf: (data: any) => data.productType === 'payday' || data.productType === 'revolving_line_of_credit' || data.productType === 'cab_cso',
     },
-   
+
     {
         key: "isOriginationFeeActive",
         label: "Is Origination Fee Active?",
@@ -330,10 +398,23 @@ export const editSheetFields: EditSheetField[] = [
         type: "currency",
         placeholder: "Enter amount (e.g., $33.33)",
         required: false,
+        maxLength: 32,
         hiddenIf: (data) => !data.isOriginationFeeActive,
         validate: (value, data) => {
-            if (data.isOriginationFeeActive && (!value || Number(value) < 0)) {
-                return "Origination Fee Amount must be 0 or greater when fee is active";
+            if (data.isOriginationFeeActive) {
+                const s = String(value ?? "").replace(/,/g, "").trim();
+                const numericValue = Number(s);
+                const isBlankValue = !s || s === "";
+                const isZero = !isBlankValue && numericValue === 0;
+                // Regex from Angular: /^\d{1,3}(\.\d{1,3})?$/
+                const isInvalidFormat = !isBlankValue && !/^\d{1,3}(\.\d{1,3})?$/.test(s);
+
+                if (isBlankValue || isZero || isInvalidFormat || numericValue < 0) {
+                    const msgs = ["* Please enter the origination fee."];
+
+                    if (isInvalidFormat) msgs.push("* Orgination Fee allows values from 1-999 or 1.000-999.999.");
+                    return msgs.join("\n");
+                }
             }
             return null;
         }
@@ -350,10 +431,13 @@ export const editSheetFields: EditSheetField[] = [
         type: "currency",
         placeholder: "Enter amount (e.g., $333.00)",
         required: false,
+        maxLength: 32,
         hiddenIf: (data) => !data.isNSFFeeActive,
         validate: (value, data) => {
-            if (data.isNSFFeeActive && (!value || Number(value) < 0)) {
-                return "NSF Fee Amount must be 0 or greater when fee is active";
+            if (data.isNSFFeeActive) {
+                const s = String(value ?? "").replace(/,/g, "").trim();
+                if (!s || s === "") return "* Please enter the NSF fee.";
+                if (Number(s) < 0) return "* Please enter the NSF fee.";
             }
             return null;
         }
@@ -370,35 +454,53 @@ export const editSheetFields: EditSheetField[] = [
         type: "currency",
         placeholder: "Enter amount (e.g., $34.00)",
         required: false,
+        maxLength: 32,
         hiddenIf: (data) => !data.isLateFeeActive,
         validate: (value, data) => {
-            if (data.isLateFeeActive && (!value || Number(value) < 0)) {
-                return "Late Fee Amount must be 0 or greater when fee is active";
+            if (data.isLateFeeActive) {
+                const s = String(value ?? "").replace(/,/g, "").trim();
+                if (!s || s === "") return "* Please enter the late fee.";
+                if (Number(s) < 0) return "* Please enter the late fee.";
             }
             return null;
         }
     },
-     {
+    {
         key: "loanDurationMin",
         label: "Min",
-        type: "number",
+        type: "text",
         placeholder: "Enter Min Duration",
         groupLabel: "Loan Duration [Months]",
         required: false,
+        maxLength: 25,
+        format: (val) => val.replace(/\D/g, ""),
         hiddenIf: (data: any) => data.productType === 'payday' || data.productType === 'revolving_line_of_credit' || data.productType === 'cab_cso',
-        validate: (value: any) => value !== undefined && value !== null && Number(value) < 0 ? "Min Duration must be 0 or greater" : null
+        validate: (value: any, data: any) => {
+            if (data.productType === 'autotitle' && (value === undefined || value === null || value === '')) return "* Required.";
+            if (value !== undefined && value !== null && value !== '' && Number(value) < 0) return "* Required.";
+            return null;
+        }
     },
     {
         key: "loanDurationMax",
         label: "Max",
-        type: "number",
+        type: "text",
         placeholder: "Enter Max Duration",
         groupLabel: "Loan Duration [Months]",
         required: false,
+        maxLength: 25,
+        format: (val) => val.replace(/\D/g, ""),
         hiddenIf: (data: any) => data.productType === 'payday' || data.productType === 'revolving_line_of_credit' || data.productType === 'cab_cso',
-        validate: (value: any) => value !== undefined && value !== null && Number(value) < 0 ? "Max Duration must be 0 or greater" : null
+        validate: (value: any, data: any) => {
+            if (data.productType === 'autotitle' && (value === undefined || value === null || value === '')) return "* Required.";
+            if (value !== undefined && value !== null && value !== '' && Number(value) < 0) return "* Required.";
+            const minVal = Number(data.loanDurationMin);
+            if (Number.isFinite(Number(value)) && Number.isFinite(minVal) && Number(value) <= minVal)
+                return "Max Duration must be greater than Min Duration";
+            return null;
+        }
     },
-   
+
     {
         key: "onlyCABCSO",
         label: "Only CAB/CSO Fee?",
@@ -422,13 +524,16 @@ export const editSheetFields: EditSheetField[] = [
     {
         key: "principalPaymentInterest",
         label: "Interest",
-        type: "number",
+        type: "text",
         placeholder: "Enter Interest",
         required: false,
+        maxLength: 25,
+        format: (val) => val.replace(/[^\d.]/g, "").replace(/(\..*?)\..*/g, '$1'),
         hiddenIf: (data: any) => !data.isPrincipalPaymentActive || data.productType !== 'payday',
         validate: (value: any, data: any) => {
-            if (data.isPrincipalPaymentActive && !data.hiddenIf?.(data) && (value === undefined || value === null || value === '')) {
-                return "Interest is required when Principal Payment is active";
+            if (data.isPrincipalPaymentActive && data.productType === 'payday') {
+                if (value === undefined || value === null || value === '') return "* Required";
+                if (Number(value) < 0) return "* Required";
             }
             return null;
         }
@@ -439,10 +544,13 @@ export const editSheetFields: EditSheetField[] = [
         type: "currency",
         placeholder: "$3434",
         required: false,
+        maxLength: 32,
         hiddenIf: (data: any) => !data.isPrincipalPaymentActive || data.productType !== 'payday',
         validate: (value: any, data: any) => {
-            if (data.isPrincipalPaymentActive && !data.hiddenIf?.(data) && (value === undefined || value === null || value === '')) {
-                return "Principal Amount is required when Principal Payment is active";
+            if (data.isPrincipalPaymentActive && data.productType === 'payday') {
+                const s = String(value ?? "").replace(/,/g, "").trim();
+                if (!s || s === "") return "* Required";
+                if (Number(s) < 0) return "* Required";
             }
             return null;
         }
@@ -457,13 +565,16 @@ export const editSheetFields: EditSheetField[] = [
     {
         key: "extensionInterest",
         label: "Interest",
-        type: "number",
+        type: "text",
         placeholder: "Enter Interest",
         required: false,
+        maxLength: 25,
+        format: (val) => val.replace(/[^\d.]/g, "").replace(/(\..*?)\..*/g, '$1'),
         hiddenIf: (data: any) => !data.isExtensionNeeded || (data.productType === 'installment' || data.productType === 'revolving_line_of_credit' || data.productType === 'autotitle'),
         validate: (value: any, data: any) => {
-            if (data.isExtensionNeeded && !data.hiddenIf?.(data) && (value === undefined || value === null || value === '')) {
-                return "Interest is required when Extension is needed";
+            if (data.isExtensionNeeded && !(data.productType === 'installment' || data.productType === 'revolving_line_of_credit' || data.productType === 'autotitle')) {
+                if (value === undefined || value === null || value === '') return "* Required.";
+                if (Number(value) < 0) return "* Required.";
             }
             return null;
         }
@@ -474,15 +585,18 @@ export const editSheetFields: EditSheetField[] = [
         type: "currency",
         placeholder: "$3434",
         required: false,
+        maxLength: 32,
         hiddenIf: (data: any) => !data.isExtensionNeeded || (data.productType === 'installment' || data.productType === 'revolving_line_of_credit' || data.productType === 'autotitle'),
         validate: (value: any, data: any) => {
-            if (data.isExtensionNeeded && !data.hiddenIf?.(data) && (value === undefined || value === null || value === '')) {
-                return "Extension Amount is required when Extension is needed";
+            if (data.isExtensionNeeded && !(data.productType === 'installment' || data.productType === 'revolving_line_of_credit' || data.productType === 'autotitle')) {
+                const s = String(value ?? "").replace(/,/g, "").trim();
+                if (!s || s === "") return "* Required.";
+                if (Number(s) < 0) return "* Required.";
             }
             return null;
         }
     },
-    
+
     {
         key: "featureOrder",
         label: "Paydown order (Drag to Reorder)",

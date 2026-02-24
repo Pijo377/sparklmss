@@ -7,6 +7,8 @@ import Portfolio from "@/features/manageleads/pages/portfolio";
 import RebatePromoCode from "@/features/manageleads/pages/RebatePromoCode";
 import Campaign from "@/features/manageleads/pages/Campaign";
 import ProductPage from "@/features/manageleads/pages/Product";
+import ScoringCostPage from "@/features/manageleads/pages/ScoringCost";
+import PortfolioMapping from "@/features/manageleads/pages/PortfolioMapping";
 import DummyPage from "./pages/Dummy";
 
 export const dashboardRoutes: RouteObject = {
@@ -23,10 +25,10 @@ export const dashboardRoutes: RouteObject = {
         { path: "leads/product", element: <ProductPage /> },
         { path: "leads/rebate", element: <RebatePromoCode /> },
         { path: "leads/campaign", element: <Campaign /> },
-        { path: "leads/mapping", element: <DummyPage title="Portfolio Mapping" /> },
+        { path: "leads/mapping", element: <PortfolioMapping /> },
         { path: "leads/blacklist", element: <DummyPage title="Blacklist Management" /> },
         { path: "leads/lead", element: <DummyPage title="Lead" /> },
-        { path: "leads/scoring", element: <DummyPage title="Scoring Cost" /> },
+        { path: "leads/scoring", element: <ScoringCostPage /> },
         { path: "transaction/approve", element: <DummyPage title="Approve Loans" /> },
         { path: "transaction/credits", element: <DummyPage title="Pending Credits" /> },
         { path: "transaction/debits", element: <DummyPage title="Pending Debits" /> },

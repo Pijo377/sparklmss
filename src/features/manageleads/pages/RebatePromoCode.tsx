@@ -1,11 +1,20 @@
-import  { useState, useCallback } from "react";
-import { Edit2, Trash2,  Plus, CheckCircle, XCircle } from "lucide-react";
+import { useState, useCallback } from "react";
+import { Edit2, Trash2, Plus, CheckCircle, XCircle } from "lucide-react";
 import { DataTable } from "@/features/manageleads/ui/data-table/DataTable";
 import { EditSheet } from "@/features/manageleads/ui/edit-sheet/EditSheet";
 import { TableCard } from "@/features/manageleads/ui/table-card/TableCard";
 import type { ActionDef, ToolbarButtonDef } from "@/features/manageleads/ui/data-table/types";
 import { initialData, editSheetFields, columns } from "@/features/manageleads/config/rebatepromocodeconfig";
 import type { RebatePromoCode } from "@/features/manageleads/config/rebatepromocodeconfig";
+
+// --- Utility Sections ---
+// Utility to convert number to string without scientific notation
+const toNonExponential = (num: any) => {
+    if (typeof num !== 'number') return String(num ?? "");
+    return num.toLocaleString('en-US', { useGrouping: false, maximumFractionDigits: 20 });
+};
+
+const fieldsToNumber = ["value"];
 
 const RebatePromoCodePage = () => {
     const [data, setData] = useState<RebatePromoCode[]>(initialData);
@@ -43,11 +52,19 @@ const RebatePromoCodePage = () => {
 
     // Handle Edit action
     const handleEdit = useCallback((code: RebatePromoCode) => {
+        // Convert numbers to non-scientific strings for the form
+        const formattedData = { ...code } as any;
+        fieldsToNumber.forEach(field => {
+            if (typeof formattedData[field] === 'number') {
+                formattedData[field] = toNonExponential(formattedData[field]);
+            }
+        });
+
         setEditSheet({
             open: true,
             mode: "edit",
             data: {
-                ...code,
+                ...formattedData,
                 validFrom: formatDateForPicker(code.validFrom),
                 validTo: formatDateForPicker(code.validTo),
             },
@@ -62,11 +79,22 @@ const RebatePromoCodePage = () => {
     // Handle Save changes
     const handleSave = useCallback((formData: RebatePromoCode) => {
         // Convert dates from YYYY-MM-DD to MM/DD/YYYY format for storage
+        // Also ensure numeric fields are handled (kept as strings if interface says so, but cleaned)
         const dataToSave = {
             ...formData,
             validFrom: formatDateForDisplay(formData.validFrom),
             validTo: formatDateForDisplay(formData.validTo),
-        };
+        } as any;
+
+        // Although the interface says string, we clean the numeric string
+        fieldsToNumber.forEach(field => {
+            if (dataToSave[field] !== undefined && dataToSave[field] !== null && dataToSave[field] !== "") {
+                const val = String(dataToSave[field]).replace(/,/g, '');
+                // We keep it as string for RebatePromoCode interface but ensure it's not exponential
+                // If we wanted to force number: dataToSave[field] = isNaN(Number(val)) ? 0 : Number(val);
+                dataToSave[field] = val;
+            }
+        });
 
         if (editSheet.mode === "add") {
             // Add new record with generated ID
@@ -113,8 +141,8 @@ const RebatePromoCodePage = () => {
             label: isActive ? "Active" : "Inactive",
             onClick: () => setIsActive(!isActive),
             variant: isActive ? "default" : "outline",
-            className: isActive 
-                ? "bg-green-600 hover:bg-green-700 text-white" 
+            className: isActive
+                ? "bg-green-600 hover:bg-green-700 text-white"
                 : "border-red-400 text-red-600 hover:bg-red-50",
         },
     ];

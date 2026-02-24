@@ -1,6 +1,6 @@
 import type { EditSheetField } from "@/features/manageleads/ui/edit-sheet/EditSheet";
 import type { ColumnDef } from "@/features/manageleads/ui/data-table/types";
-import { portfolioValidators, formatPhoneNumber } from "@/features/manageleads/components/utils/utils";
+import { portfolioValidators, formatPhoneNumber, digitsOnly } from "@/features/manageleads/components/utils/utils";
 
 // Type definitions for Portfolio
 export interface Portfolio {
@@ -54,6 +54,7 @@ export const editSheetFields: EditSheetField[] = [
         label: "Portfolio Name",
         type: "text",
         required: true,
+
         placeholder: "Enter portfolio name",
         validate: portfolioValidators.portfolioName,
     },
@@ -62,6 +63,7 @@ export const editSheetFields: EditSheetField[] = [
         label: "Address",
         type: "text",
         required: true,
+
         placeholder: "Enter address",
         validate: portfolioValidators.address,
     },
@@ -106,6 +108,7 @@ export const editSheetFields: EditSheetField[] = [
         label: "Phone",
         type: "text",
         required: true,
+        hideMaxLimitMessage: true,
         placeholder: "Enter phone number",
         format: formatPhoneNumber,
         validate: portfolioValidators.phone,
@@ -115,6 +118,8 @@ export const editSheetFields: EditSheetField[] = [
         label: "Fax",
         type: "text",
         required: true,
+
+        hideMaxLimitMessage: true,
         placeholder: "(000)-000-0000",
         format: formatPhoneNumber,
         validate: portfolioValidators.fax,
@@ -124,6 +129,7 @@ export const editSheetFields: EditSheetField[] = [
         label: "Email",
         type: "text",
         required: true,
+
         placeholder: "Enter email address",
         validate: portfolioValidators.email,
     },
@@ -143,6 +149,7 @@ export const editSheetFields: EditSheetField[] = [
         key: "movePayDateOnHoliday",
         label: "Move Pay Date on Holiday",
         type: "select",
+        required: true,
         validate: portfolioValidators.movePayDateOnHoliday,
         options: [
             { value: "Before", label: "Before" },
@@ -151,8 +158,10 @@ export const editSheetFields: EditSheetField[] = [
     },
     {
         key: "withdrawLeadsAfter",
-        label: "Withdraw Leads After (Days)",
-        type: "number",
+        label: "Withdraw Leads After",
+        type: "text",
+
+        format: digitsOnly,
         placeholder: "7",
         validate: portfolioValidators.withdrawLeadsAfter,
     },
@@ -160,6 +169,7 @@ export const editSheetFields: EditSheetField[] = [
         key: "maxTransactionTime",
         label: "Max Transaction Time",
         type: "time",
+        required: true,
         placeholder: "HH:MM:SS",
     },
     {

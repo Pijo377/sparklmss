@@ -13,6 +13,18 @@ import {
     editSheetFields,
 } from "@/features/manageleads/config/campaign-config";
 
+// --- Utility Sections ---
+// Utility to convert number to string without scientific notation
+const toNonExponential = (num: any) => {
+    if (typeof num !== 'number') return String(num ?? "");
+    return num.toLocaleString('en-US', { useGrouping: false, maximumFractionDigits: 20 });
+};
+
+const fieldsToNumber = [
+    "maxHourlyLead", "maxDailyLeads", "firstPaymentMinDuration",
+    "firstPaymentMaxDuration", "loanToIncomeRatio", "achCoolOffDays"
+];
+
 
 // --- Component Section ---
 
@@ -31,10 +43,18 @@ const CampaignPage = () => {
 
     // Handle Edit action
     const handleEdit = useCallback((campaign: Campaign) => {
+        // Convert numbers to non-scientific strings for the form
+        const formattedData = { ...campaign } as any;
+        fieldsToNumber.forEach(field => {
+            if (typeof formattedData[field] === 'number') {
+                formattedData[field] = toNonExponential(formattedData[field]);
+            }
+        });
+
         setEditSheet({
             open: true,
             mode: "edit",
-            data: campaign,
+            data: formattedData as Campaign,
         });
     }, []);
 
@@ -49,17 +69,26 @@ const CampaignPage = () => {
 
     // Handle Save changes
     const handleSave = useCallback((formData: Campaign) => {
-        console.log("Saved Data:", formData);
+        // Convert strings back to numbers before saving for numeric fields
+        const dataToSave = { ...formData } as any;
+        fieldsToNumber.forEach(field => {
+            if (dataToSave[field] !== undefined && dataToSave[field] !== null && dataToSave[field] !== "") {
+                const val = String(dataToSave[field]).replace(/,/g, '');
+                dataToSave[field] = isNaN(Number(val)) ? 0 : Number(val);
+            }
+        });
+
+        console.log("Saved Data:", dataToSave);
         console.log("Mode:", editSheet.mode);
         if (editSheet.mode === "add") {
             // Add new record with generated ID
             const newId = String(Math.max(...data.map(item => parseInt(item.id) || 0), 0) + 1);
-            setData((prev) => [...prev, { ...formData, id: newId, active: true }]);
-            console.log("Adding Campaign:", formData);
+            setData((prev) => [...prev, { ...dataToSave, id: newId, active: true }]);
+            console.log("Adding Campaign:", dataToSave);
         } else if (editSheet.mode === "edit" && editSheet.data) {
             // Update existing record
             setData((prev) =>
-                prev.map((item) => (item.id === editSheet.data?.id ? { ...formData, id: item.id } : item))
+                prev.map((item) => (item.id === editSheet.data?.id ? { ...dataToSave, id: item.id } : item))
             );
         }
         setEditSheet({ open: false, mode: "edit", data: null });
