@@ -55,6 +55,10 @@ const BlacklistManagement = () => {
     const [subSubaffiliate, setSubSubaffiliate] = useState("");
     const [subErrors, setSubErrors] = useState<Record<string, string | null>>({});
 
+    // Bulk Import state
+    const [importFile, setImportFile] = useState<File | null>(null);
+    const [importError, setImportError] = useState<string | null>(null);
+
     // Handlers
     const handleDelete = useCallback((id: number) => {
         setData((prev) => prev.filter((item) => item.id !== id));
@@ -159,6 +163,18 @@ const BlacklistManagement = () => {
         setSubErrors({});
     }, [subCampaign, subAffiliate, subSubaffiliate]);
 
+    // Bulk Import handler
+    const handleImport = useCallback(() => {
+        if (!importFile) {
+            setImportError("*Select file to upload..!");
+            return;
+        }
+        // Logic for actual import would go here
+        console.log("Importing file:", importFile.name);
+        setImportFile(null);
+        setImportError(null);
+    }, [importFile]);
+
     // Reset all entry state on category change
     const handleCategoryChange = useCallback((name: string) => {
         setActiveCategory(name);
@@ -172,6 +188,8 @@ const BlacklistManagement = () => {
         setSubAffiliate("");
         setSubSubaffiliate("");
         setSubErrors({});
+        setImportFile(null);
+        setImportError(null);
 
         // Update data based on category (mock behavior)
         switch (name) {
@@ -690,9 +708,20 @@ const BlacklistManagement = () => {
                                     <input
                                         className="w-full text-[10px] text-slate-500 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-[10px] file:font-semibold file:bg-slate-100 file:text-slate-700 hover:file:bg-slate-200 cursor-pointer bg-slate-50 border border-slate-200 rounded-lg p-1"
                                         type="file"
+                                        onChange={(e) => {
+                                            const file = e.target.files?.[0] || null;
+                                            setImportFile(file);
+                                            setImportError(null);
+                                        }}
                                     />
+                                    {importError && (
+                                        <p className="text-[10px] text-red-500 mt-1 font-medium">{importError}</p>
+                                    )}
                                 </div>
-                                <button className="w-full bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold py-2.5 rounded-lg transition-all flex items-center justify-center gap-2 mt-2">
+                                <button
+                                    onClick={handleImport}
+                                    className="w-full bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold py-2.5 rounded-lg transition-all flex items-center justify-center gap-2 mt-2"
+                                >
                                     <Upload size={14} />
                                     Import
                                 </button>
