@@ -1,6 +1,6 @@
 
-import type { EditSheetField } from "@/features/manageleads/ui/edit-sheet/EditSheet";
-import type { ColumnDef } from "@/features/manageleads/ui/data-table/types";
+import type { EditSheetField } from "@/features/scoringcost/ui/edit-sheet/EditSheet";
+import type { ColumnDef } from "@/features/scoringcost/ui/data-table/types";
 
 // Type definitions for ScoringCost
 export interface ScoringCost {

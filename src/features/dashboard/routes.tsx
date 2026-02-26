@@ -7,7 +7,7 @@ import Portfolio from "@/features/manageleads/pages/portfolio";
 import RebatePromoCode from "@/features/manageleads/pages/RebatePromoCode";
 import Campaign from "@/features/manageleads/pages/Campaign";
 import ProductPage from "@/features/manageleads/pages/Product";
-import ScoringCostPage from "@/features/manageleads/pages/ScoringCost";
+import ScoringCostPage from "@/features/scoringcost/pages/ScoringCost";
 import PortfolioMapping from "@/features/manageleads/pages/PortfolioMapping";
 import BlacklistManagement from "@/features/blacklist/pages/BlacklistManagement";
 import DummyPage from "./pages/Dummy";

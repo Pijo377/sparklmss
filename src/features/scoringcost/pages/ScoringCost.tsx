@@ -1,11 +1,11 @@
 
 import { useState, useCallback } from "react";
 import { Edit2, Trash2, Plus, CheckCircle, XCircle } from "lucide-react";
-import { DataTable } from "@/features/manageleads/ui/data-table/DataTable";
-import { EditSheet } from "@/features/manageleads/ui/edit-sheet/EditSheet";
-import { TableCard } from "@/features/manageleads/ui/table-card/TableCard";
-import type { ActionDef, ToolbarButtonDef } from "@/features/manageleads/ui/data-table/types";
-import { initialData, editSheetFields, columns, type ScoringCost } from "@/features/manageleads/config/scoringcostconfig";
+import { DataTable } from "@/features/scoringcost/ui/data-table/DataTable";
+import { EditSheet } from "@/features/scoringcost/ui/edit-sheet/EditSheet";
+import { TableCard } from "@/features/scoringcost/ui/table-card/TableCard";
+import type { ActionDef, ToolbarButtonDef } from "@/features/scoringcost/ui/data-table/types";
+import { initialData, editSheetFields, columns, type ScoringCost } from "@/features/scoringcost/config/scoringcostconfig";
 
 const ScoringCostPage = () => {
     const [data, setData] = useState<ScoringCost[]>(initialData);
