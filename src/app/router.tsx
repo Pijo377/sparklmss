@@ -5,6 +5,7 @@ import { NotFoundPage } from "./pages/NotFoundPage";
 // Feature routes
 import { authRoutes } from "@/features/auth/routes";
 import { dashboardRoutes } from "@/features/dashboard/routes";
+import { addLeadsRoutes } from "@/features/AddLeads/routes";
 
 const router = createBrowserRouter([
   // Auth routes (login)
@@ -16,6 +17,7 @@ const router = createBrowserRouter([
     children: [
       // Feature routes
       dashboardRoutes,
+      addLeadsRoutes,
     ],
   },
 
