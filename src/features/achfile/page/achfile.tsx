@@ -168,10 +168,10 @@ const ACHFile: React.FC = () => {
     return (
         <div className="flex flex-col gap-4 p-4">
             <div className="flex items-center justify-between">
-                <h1 className="text-2xl font-semibold text-slate-900 shrink-0">ACH File Settings</h1>
+                <h1 className="text-2xl font-semibold text-slate-900 shrink-0">ACH File</h1>
             </div>
 
-            <Card className="flex items-center justify-between gap-6 h-auto p-5 border-blue-200 border-2 shadow-sm">
+            <Card className="flex items-center justify-between gap-6 h-auto p-5 border-blue-400 border-2 shadow-sm">
                 <div className="flex-1 max-w-sm">
                     <label className="block text-sm font-medium text-slate-900 mb-1.5">ACH File Type</label>
                     <Select value={selectedFileType} onValueChange={handleFileTypeChange}>

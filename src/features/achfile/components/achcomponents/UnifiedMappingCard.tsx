@@ -62,8 +62,8 @@ const UnifiedMappingCard: React.FC<UnifiedMappingCardProps> = ({
     ErrorMsg
 }) => {
     return (
-        <Card className="p-4 h-full border-emerald-200 border-2 shadow-sm">
-            <div className="flex items-center gap-3 mb-3 border-b border-emerald-50 pb-2">
+        <Card className="p-4 h-full border-emerald-400 border-2 shadow-sm">
+            <div className="flex items-center gap-3 mb-3 border-b border-emerald-100 pb-2">
                 <GitBranch size={16} className="text-emerald-600" />
                 <h3 className="text-sm font-semibold text-emerald-600 ">Unified Mapping</h3>
             </div>
@@ -77,12 +77,12 @@ const UnifiedMappingCard: React.FC<UnifiedMappingCardProps> = ({
                 >
                     <div>
                         <div className="flex items-center gap-2 mb-3">
-                            <Box size={14} className="text-indigo-400" />
-                            <h4 className="text-[12px] font-semibold text-indigo-400 uppercase tracking-widest">Product Mapping(Drag and Drop)</h4>
+                            <Box size={14} className="text-indigo-500" />
+                            <h4 className="text-[12px] font-semibold text-indigo-500 uppercase tracking-widest">Product Mapping (Drag and Drop)</h4>
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                             <div className="flex flex-col">
-                                <span className="text-sm font-medium text-slate-400 mb-2">Product(Drag and Drop)</span>
+                                <span className="text-sm font-medium text-slate-900 mb-2">Product</span>
                                 <DroppableContainer id="available-products-droppable" emptyLabel="No available products">
                                     <SortableContext items={availableProducts.map(p => p.id)} strategy={verticalListSortingStrategy}>
                                         {availableProducts.map((p) => (
@@ -92,7 +92,7 @@ const UnifiedMappingCard: React.FC<UnifiedMappingCardProps> = ({
                                 </DroppableContainer>
                             </div>
                             <div className="flex flex-col">
-                                <span className="text-sm font-medium text-slate-400 mb-2">Mapped</span>
+                                <span className="text-sm font-medium text-slate-900 mb-2">Mapped</span>
                                 <DroppableContainer id="mapped-products-droppable" emptyLabel="Drop products here">
                                     <SortableContext items={mappedProducts.map(p => p.id)} strategy={verticalListSortingStrategy}>
                                         {mappedProducts.map((p) => (
@@ -114,7 +114,7 @@ const UnifiedMappingCard: React.FC<UnifiedMappingCardProps> = ({
 
                 {selectedFileType === 'CSV File' && (
                     <>
-                        <div className="border-t border-slate-100"></div>
+                        <div className="border-t border-emerald-100"></div>
 
                         {/* CSV Fields Mapping */}
                         <div>
@@ -126,12 +126,12 @@ const UnifiedMappingCard: React.FC<UnifiedMappingCardProps> = ({
                             >
                                 <div>
                                     <div className="flex items-center gap-2 mb-3">
-                                        <ListFilter size={14} className="text-emerald-400" />
-                                        <h4 className="text-[12px] font-semibold text-emerald-400 uppercase tracking-widest">CSV Fields (Drag and Drop)</h4>
+                                        <ListFilter size={14} className="text-emerald-600" />
+                                        <h4 className="text-[12px] font-semibold text-emerald-600 uppercase tracking-widest">CSV Fields (Drag and Drop)</h4>
                                     </div>
                                     <div className="grid grid-cols-2 gap-4">
                                         <div className="flex flex-col">
-                                            <span className="text-sm font-medium text-slate-400 mb-2">CSV Fields (Drag and Drop)</span>
+                                            <span className="text-sm font-medium text-slate-900 mb-2">CSV Fields</span>
                                             <DroppableContainer id="available-fields-droppable" emptyLabel="No fields left">
                                                 <SortableContext items={availableFields.map(f => f.id)} strategy={verticalListSortingStrategy}>
                                                     {availableFields.map((f) => (
@@ -141,7 +141,7 @@ const UnifiedMappingCard: React.FC<UnifiedMappingCardProps> = ({
                                             </DroppableContainer>
                                         </div>
                                         <div className="flex flex-col">
-                                            <span className="text-sm font-medium text-slate-400 mb-2">Mapped CSV Fields</span>
+                                            <span className="text-sm font-medium text-slate-900 mb-2">Mapped CSV Fields</span>
                                             <DroppableContainer id="sequence-fields-droppable" emptyLabel="Drag fields here to define order">
                                                 <SortableContext items={sequenceFields.map(f => f.id)} strategy={verticalListSortingStrategy}>
                                                     {sequenceFields.map((f) => (
@@ -169,7 +169,7 @@ const UnifiedMappingCard: React.FC<UnifiedMappingCardProps> = ({
                         <div className="border-t border-slate-100 mt-4 mb-4"></div>
 
                         <div className="mb-6">
-                            <label className="block text-sm font-medium text-slate-400 mb-1.5">Separator</label>
+                            <label className="block text-sm font-medium text-slate-900 mb-1.5">Separator</label>
                             <Input
                                 className={`h-11 px-4 text-sm bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 ${!isAddendaRecordIndicatorChecked ? 'opacity-50 cursor-not-allowed bg-slate-50' : ''}`}
                                 type="text"
@@ -191,12 +191,12 @@ const UnifiedMappingCard: React.FC<UnifiedMappingCardProps> = ({
                             >
                                 <div>
                                     <div className="flex items-center gap-2 mb-3">
-                                        <ListFilter size={14} className="text-emerald-400" />
-                                        <h4 className="text-[10px] font-semibold text-slate-900 uppercase tracking-widest">Addenda Fields (Drag and Drop)</h4>
+                                        <ListFilter size={14} className="text-emerald-500" />
+                                        <h4 className="text-[12px] font-semibold text-emerald-600 uppercase tracking-widest">Addenda Fields (Drag and Drop)</h4>
                                     </div>
                                     <div className="grid grid-cols-2 gap-4">
                                         <div className="flex flex-col">
-                                            <span className="text-sm font-medium text-slate-400 mb-2">Addenda Fields (Drag and Drop)</span>
+                                            <span className="text-sm font-medium text-slate-900 mb-2">Addenda Fields </span>
                                             <DroppableContainer id="available-addenda-fields-droppable" emptyLabel="No fields left">
                                                 <SortableContext items={availableAddendaFields.map(f => f.id)} strategy={verticalListSortingStrategy}>
                                                     {availableAddendaFields.map((f) => (
@@ -206,7 +206,7 @@ const UnifiedMappingCard: React.FC<UnifiedMappingCardProps> = ({
                                             </DroppableContainer>
                                         </div>
                                         <div className="flex flex-col">
-                                            <span className="text-sm font-medium text-slate-400 mb-2">Mapped Addenda Fields</span>
+                                            <span className="text-sm font-medium text-slate-900 mb-2">Mapped Fields</span>
                                             <DroppableContainer id="sequence-addenda-fields-droppable" emptyLabel="Drag fields here to define order">
                                                 <SortableContext items={sequenceAddendaFields.map(f => f.id)} strategy={verticalListSortingStrategy}>
                                                     {sequenceAddendaFields.map((f) => (
