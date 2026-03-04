@@ -52,7 +52,7 @@ const ACHConfigurationCard: React.FC<ACHConfigurationCardProps> = ({
     ErrorMsg
 }) => {
     return (
-        <Card className="p-5 border-purple-400 border-2 shadow-sm">
+        <Card className="p-5 border-purple-200 border-2 shadow-sm">
             <div className="flex items-center gap-3 mb-4 border-b border-purple-100 pb-2">
                 <Settings2 size={16} className="text-purple-600" />
                 <h3 className="text-sm font-semibold text-purple-600 ">ACH Configuration</h3>

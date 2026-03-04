@@ -12,13 +12,13 @@ import { useServerCredentials } from '../hooks/useServerCredentials';
 import { useCsvFields } from '../hooks/useCsvFields';
 import { useDragAndDrop } from '../hooks/useDragAndDrop';
 import { useACHForm } from '../hooks/useACHForm';
-import ACHConfigurationCard from '../components/achcomponents/ACHConfigurationCard';
-import FileDetailsCard from '../components/achcomponents/FileDetailsCard';
-import ReturnConfigCard from '../components/achcomponents/ReturnConfigCard';
-import ProcessingOptionsCard from '../components/achcomponents/ProcessingOptionsCard';
-import UnifiedMappingCard from '../components/achcomponents/UnifiedMappingCard';
-import CsvFieldsCard from '../components/achcomponents/CsvFieldsCard';
-import ServerCredentialsCard from '../components/achcomponents/ServerCredentialsCard';
+import ACHConfigurationCard from '../components/ach/ACHConfigurationCard';
+import FileDetailsCard from '../components/ach/FileDetailsCard';
+import ReturnConfigCard from '../components/ach/ReturnConfigCard';
+import ProcessingOptionsCard from '../components/ach/ProcessingOptionsCard';
+import UnifiedMappingCard from '../components/ach/UnifiedMappingCard';
+import CsvFieldsCard from '../components/ach/CsvFieldsCard';
+import ServerCredentialsCard from '../components/ach/ServerCredentialsCard';
 
 const ACHFile: React.FC = () => {
     const {
@@ -171,7 +171,7 @@ const ACHFile: React.FC = () => {
                 <h1 className="text-2xl font-semibold text-slate-900 shrink-0">ACH File</h1>
             </div>
 
-            <Card className="flex items-center justify-between gap-6 h-auto p-5 border-blue-400 border-2 shadow-sm">
+            <Card className="flex items-center justify-between gap-6 h-auto p-5 border-blue-200 border-2 shadow-sm">
                 <div className="flex-1 max-w-sm">
                     <label className="block text-sm font-medium text-slate-900 mb-1.5">ACH File Type</label>
                     <Select value={selectedFileType} onValueChange={handleFileTypeChange}>

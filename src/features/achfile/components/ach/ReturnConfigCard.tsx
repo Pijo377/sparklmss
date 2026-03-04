@@ -20,8 +20,8 @@ const ReturnConfigCard: React.FC<ReturnConfigCardProps> = ({
     ErrorMsg
 }) => {
     return (
-        <Card className="p-6 flex-1 flex flex-col border-orange-400 border-2 shadow-sm">
-            <div className="flex items-center gap-3 mb-4 border-b border-orange-50 pb-2">
+        <Card className="p-6 flex-1 flex flex-col border-orange-200 border-2 shadow-sm">
+            <div className="flex items-center gap-3 mb-4 border-b border-orange-100 pb-2">
                 <RotateCcw size={16} className="text-orange-600" />
                 <h3 className="text-sm font-semibold text-orange-600 ">Return Configuration</h3>
             </div>

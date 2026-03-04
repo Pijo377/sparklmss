@@ -54,10 +54,10 @@ const ServerCredentialsCard: React.FC<ServerCredentialsCardProps> = ({
     ErrorMsg
 }) => {
     return (
-        <Card className="p-5 border-red-400 border-2 shadow-sm">
+        <Card className="p-5 border-red-200 border-2 shadow-sm">
             <div className="flex items-center gap-3 mb-4 border-b border-red-100 pb-2">
-                <Server size={16} className="text-red-400" />
-                <h3 className="text-sm font-semibold text-red-400 ">Server Credentials</h3>
+                <Server size={16} className="text-red-600" />
+                <h3 className="text-sm font-semibold text-red-600 ">Server Credentials</h3>
             </div>
 
             <div className="space-y-6">

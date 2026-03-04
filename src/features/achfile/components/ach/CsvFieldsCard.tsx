@@ -25,7 +25,7 @@ const CsvFieldsCard: React.FC<CsvFieldsCardProps> = ({
     if (selectedFileType !== 'CSV File' || !provider) return null;
 
     return (
-        <Card className="p-5 border-slate-400 border-2 shadow-sm">
+        <Card className="p-5 border-slate-200 border-2 shadow-sm">
             <div className="flex items-center justify-between border-b border-slate-100 pb-2">
                 <div className="flex items-center gap-3">
                     <FileText size={16} className="text-slate-600" />

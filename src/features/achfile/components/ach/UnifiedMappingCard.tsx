@@ -62,7 +62,7 @@ const UnifiedMappingCard: React.FC<UnifiedMappingCardProps> = ({
     ErrorMsg
 }) => {
     return (
-        <Card className="p-4 h-full border-emerald-400 border-2 shadow-sm">
+        <Card className="p-4 h-full border-emerald-200 border-2 shadow-sm">
             <div className="flex items-center gap-3 mb-3 border-b border-emerald-100 pb-2">
                 <GitBranch size={16} className="text-emerald-600" />
                 <h3 className="text-sm font-semibold text-emerald-600 ">Unified Mapping</h3>
@@ -77,8 +77,8 @@ const UnifiedMappingCard: React.FC<UnifiedMappingCardProps> = ({
                 >
                     <div>
                         <div className="flex items-center gap-2 mb-3">
-                            <Box size={14} className="text-indigo-500" />
-                            <h4 className="text-[12px] font-semibold text-indigo-500 uppercase tracking-widest">Product Mapping (Drag and Drop)</h4>
+                            <Box size={14} className="text-indigo-700" />
+                            <h4 className="text-[12px] font-semibold text-indigo-700 uppercase tracking-widest">Product Mapping (Drag and Drop)</h4>
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                             <div className="flex flex-col">
@@ -126,8 +126,8 @@ const UnifiedMappingCard: React.FC<UnifiedMappingCardProps> = ({
                             >
                                 <div>
                                     <div className="flex items-center gap-2 mb-3">
-                                        <ListFilter size={14} className="text-emerald-600" />
-                                        <h4 className="text-[12px] font-semibold text-emerald-600 uppercase tracking-widest">CSV Fields (Drag and Drop)</h4>
+                                        <ListFilter size={14} className="text-green-700" />
+                                        <h4 className="text-[12px] font-semibold text-green-700 uppercase tracking-widest">CSV Fields (Drag and Drop)</h4>
                                     </div>
                                     <div className="grid grid-cols-2 gap-4">
                                         <div className="flex flex-col">
@@ -191,8 +191,8 @@ const UnifiedMappingCard: React.FC<UnifiedMappingCardProps> = ({
                             >
                                 <div>
                                     <div className="flex items-center gap-2 mb-3">
-                                        <ListFilter size={14} className="text-emerald-500" />
-                                        <h4 className="text-[12px] font-semibold text-emerald-600 uppercase tracking-widest">Addenda Fields (Drag and Drop)</h4>
+                                        <ListFilter size={14} className="text-green-700" />
+                                        <h4 className="text-[12px] font-semibold text-green-700 uppercase tracking-widest">Addenda Fields (Drag and Drop)</h4>
                                     </div>
                                     <div className="grid grid-cols-2 gap-4">
                                         <div className="flex flex-col">

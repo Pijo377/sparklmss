@@ -26,7 +26,7 @@ const ProcessingOptionsCard: React.FC<ProcessingOptionsCardProps> = ({
     setStatus
 }) => {
     return (
-        <Card className="p-6 flex-1 flex flex-col border-indigo-400 border-2 shadow-sm">
+        <Card className="p-6 flex-1 flex flex-col border-indigo-200 border-2 shadow-sm">
             <div className="flex items-center gap-3 mb-4 border-b border-indigo-100 pb-2">
                 <ToggleRight size={16} className="text-indigo-600" />
                 <h3 className="text-sm font-semibold text-indigo-600 ">Processing Options</h3>

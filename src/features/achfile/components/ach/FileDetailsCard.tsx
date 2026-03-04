@@ -23,7 +23,7 @@ const FileDetailsCard: React.FC<FileDetailsCardProps> = ({
     ErrorMsg
 }) => {
     return (
-        <Card className="p-6 flex-1 flex flex-col border-blue-400 border-2 shadow-sm">
+        <Card className="p-6 flex-1 flex flex-col border-blue-200 border-2 shadow-sm">
             <div className="flex items-center gap-3 mb-4 border-b border-blue-100 pb-2">
                 <FileText size={16} className="text-blue-600" />
                 <h3 className="text-sm font-semibold text-blue-600 ">File Details</h3>
