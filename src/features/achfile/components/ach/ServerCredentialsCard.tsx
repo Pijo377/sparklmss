@@ -92,13 +92,33 @@ const ServerCredentialsCard: React.FC<ServerCredentialsCardProps> = ({
                             <ErrorMsg field="uploadProtocol" />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-slate-900 mb-1">Host Name</label>
-                            <Input className="h-11 px-4 text-sm bg-white border border-gray-200 rounded-xl" maxLength={255} value={uploadHostName} onChange={(e) => setUploadHostName(e.target.value)} />
+                            <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <label className="block text-sm font-medium text-slate-900 mb-1 truncate max-w-[180px] cursor-pointer">
+                                            Host Name
+                                        </label>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        Host Name
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>   <Input className="h-11 px-4 text-sm bg-white border border-gray-200 rounded-xl" maxLength={255} value={uploadHostName} onChange={(e) => setUploadHostName(e.target.value)} />
                             <ErrorMsg field="uploadHostName" value={uploadHostName} />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-slate-900 mb-1">User Name</label>
-                            <Input className="h-11 px-4 text-sm bg-white border border-gray-200 rounded-xl" maxLength={36} value={uploadUserName} onChange={(e) => setUploadUserName(e.target.value)} />
+                            <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <label className="block text-sm font-medium text-slate-900 mb-1 truncate max-w-[180px] cursor-pointer">
+                                            User Name
+                                        </label>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        User Name
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>  <Input className="h-11 px-4 text-sm bg-white border border-gray-200 rounded-xl" maxLength={36} value={uploadUserName} onChange={(e) => setUploadUserName(e.target.value)} />
                             <ErrorMsg field="uploadUserName" value={uploadUserName} />
                         </div>
                         <div>
@@ -112,8 +132,18 @@ const ServerCredentialsCard: React.FC<ServerCredentialsCardProps> = ({
                             <ErrorMsg field="uploadPortNo" value={uploadPortNo} />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-slate-900 mb-1">Path to Upload</label>
-                            <Input className="h-11 px-4 text-sm bg-white border border-gray-200 rounded-xl" maxLength={200} value={uploadPath} onChange={(e) => setUploadPath(e.target.value)} />
+                            <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <label className="block text-sm font-medium text-slate-900 mb-1 truncate max-w-[180px] cursor-pointer">
+                                            Path to Upload
+                                        </label>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        Path to Upload
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>  <Input className="h-11 px-4 text-sm bg-white border border-gray-200 rounded-xl" maxLength={200} value={uploadPath} onChange={(e) => setUploadPath(e.target.value)} />
                             <ErrorMsg field="uploadPath" value={uploadPath} />
                         </div>
                     </div>
@@ -152,13 +182,33 @@ const ServerCredentialsCard: React.FC<ServerCredentialsCardProps> = ({
                             <ErrorMsg field="downloadProtocol" />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-slate-900 mb-1">Host Name</label>
-                            <Input className="h-11 px-4 text-sm bg-white border border-gray-200 rounded-xl" maxLength={255} value={downloadHostName} onChange={(e) => setDownloadHostName(e.target.value)} />
+                            <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <label className="block text-sm font-medium text-slate-900 mb-1 truncate max-w-[180px] cursor-pointer">
+                                            Host Name
+                                        </label>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        Host Name
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>  <Input className="h-11 px-4 text-sm bg-white border border-gray-200 rounded-xl" maxLength={255} value={downloadHostName} onChange={(e) => setDownloadHostName(e.target.value)} />
                             <ErrorMsg field="downloadHostName" value={downloadHostName} />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-slate-900 mb-1">User Name</label>
-                            <Input className="h-11 px-4 text-sm bg-white border border-gray-200 rounded-xl" maxLength={36} value={downloadUserName} onChange={(e) => setDownloadUserName(e.target.value)} />
+                            <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <label className="block text-sm font-medium text-slate-900 mb-1 truncate max-w-[180px] cursor-pointer">
+                                            User Name
+                                        </label>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        User Name
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>    <Input className="h-11 px-4 text-sm bg-white border border-gray-200 rounded-xl" maxLength={36} value={downloadUserName} onChange={(e) => setDownloadUserName(e.target.value)} />
                             <ErrorMsg field="downloadUserName" value={downloadUserName} />
                         </div>
                         <div>
@@ -172,8 +222,18 @@ const ServerCredentialsCard: React.FC<ServerCredentialsCardProps> = ({
                             <ErrorMsg field="downloadPortNo" value={downloadPortNo} />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-slate-900 mb-1">Path to Download</label>
-                            <Input className="h-11 px-4 text-sm bg-white border border-gray-200 rounded-xl" maxLength={200} value={downloadPath} onChange={(e) => setDownloadPath(e.target.value)} />
+                            <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <label className="block text-sm font-medium text-slate-900 mb-1 truncate max-w-[180px] cursor-pointer">
+                                            Path to Download
+                                        </label>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        Path to Download
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>   <Input className="h-11 px-4 text-sm bg-white border border-gray-200 rounded-xl" maxLength={200} value={downloadPath} onChange={(e) => setDownloadPath(e.target.value)} />
                             <ErrorMsg field="downloadPath" value={downloadPath} />
                         </div>
                     </div>

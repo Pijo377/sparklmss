@@ -66,8 +66,18 @@ const ACHConfigurationCard: React.FC<ACHConfigurationCardProps> = ({
                 {selectedFileType !== 'CSV File' && (
                     <>
                         <div>
-                            <label className="block text-sm font-medium text-slate-900 mb-1.5">Immediate Destination</label>
-                            <Input className="h-11 px-4 text-sm bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" type="tel" maxLength={9} value={destination} onChange={(e) => setDestination(e.target.value)} />
+                            <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <label className="block text-sm font-medium text-slate-900 mb-1.5 truncate max-w-[180px] cursor-pointer">
+                                            Immediate Destination
+                                        </label>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        Immediate Destination
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>   <Input className="h-11 px-4 text-sm bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" type="tel" maxLength={9} value={destination} onChange={(e) => setDestination(e.target.value)} />
                             <ErrorMsg field="destination" value={destination} />
                         </div>
                         <div>
@@ -91,8 +101,18 @@ const ACHConfigurationCard: React.FC<ACHConfigurationCardProps> = ({
                             <ErrorMsg field="destinationName" value={destinationName} />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-slate-900 mb-1.5">Immediate Origin Name</label>
-                            <Input className="h-11 px-4 text-sm bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" type="text" maxLength={23} value={originName} onChange={(e) => setOriginName(e.target.value)} />
+                            <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <label className="block text-sm font-medium text-slate-900 mb-1.5 truncate max-w-[180px] cursor-pointer">
+                                            Immediate Origin Name
+                                        </label>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        Immediate Origin Name
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>  <Input className="h-11 px-4 text-sm bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" type="text" maxLength={23} value={originName} onChange={(e) => setOriginName(e.target.value)} />
                             <ErrorMsg field="originName" value={originName} />
                         </div>
                         <div>

@@ -2,7 +2,12 @@ import React from 'react';
 import { FileText } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/features/achfile/ui/select";
 import Card from '@/features/achfile/ui/card';
-
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "@/shared/components/ui/tooltip";
 interface FileDetailsCardProps {
     provider: string;
     setProvider: (val: string) => void;
@@ -55,8 +60,18 @@ const FileDetailsCard: React.FC<FileDetailsCardProps> = ({
                     </Select>
                 </div>
                 <div>
-                    <label className="block text-sm font-medium text-slate-900 mb-1.5">Returns Task Name</label>
-                    <Select value={returnsTaskName} onValueChange={setReturnsTaskName}>
+                    <TooltipProvider>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <label className="block text-sm font-medium text-slate-900 mb-1 truncate max-w-[180px] cursor-pointer">
+                                    Returns Task Name
+                                </label>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                Returns Task Name
+                            </TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>   <Select value={returnsTaskName} onValueChange={setReturnsTaskName}>
                         <SelectTrigger className="h-11 px-4 text-sm bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
                             <SelectValue placeholder="Select Return Task" />
                         </SelectTrigger>
