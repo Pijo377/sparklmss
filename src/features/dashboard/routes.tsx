@@ -11,6 +11,7 @@ import ScoringCostPage from "@/features/scoringcost/pages/ScoringCost";
 import PortfolioMapping from "@/features/manageleads/pages/PortfolioMapping";
 import BlacklistManagement from "@/features/blacklist/pages/BlacklistManagement";
 import ACHFile from "@/features/achfile/page/achfile";
+import AchProvider from "@/features/achprovider/page/AchProvider";
 import DummyPage from "./pages/Dummy";
 
 export const dashboardRoutes: RouteObject = {
@@ -43,7 +44,7 @@ export const dashboardRoutes: RouteObject = {
         { path: "config/email", element: <DummyPage title="Email" /> },
         { path: "config/sms", element: <DummyPage title="SMS" /> },
         { path: "config/ach-file", element: <ACHFile /> },
-        { path: "config/ach-provider", element: <DummyPage title="ACH Provider" /> },
+        { path: "config/ach-provider", element: <AchProvider /> },
         { path: "config/bureau", element: <DummyPage title="Bureau" /> },
         { path: "config/auto-origination", element: <DummyPage title="Auto Origination" /> },
         { path: "config/underwriting", element: <DummyPage title="Underwriting" /> },
