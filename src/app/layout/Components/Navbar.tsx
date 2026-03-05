@@ -52,7 +52,7 @@ const NAV_ACTIONS = [
     path: "/dashboard/dashboard-tab",
   },
   {
-    label: "Leads",
+    label: "Add Leads",
     icon: MdOutlineAddCircle,
     outline: MdOutlineAddCircleOutline,
     path: "/customers/leads",
