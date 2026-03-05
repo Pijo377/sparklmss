@@ -20,8 +20,8 @@ export const validateBank = (form: any) => {
 };
 
 
-export const BankInformation = ({ form, errors, updateField }: any) => (
-  <FormSection title="Bank Information" colorClass="bg-indigo-500">
+export const BankInformation = ({ form, errors, updateField, borderColor = 'amber' }: any) => (
+  <FormSection title="Bank Information" icon={<Landmark />} borderColor={borderColor}>
     <Input label="ABA Number" id="AbaNumber" error={errors.AbaNumber} icon={<Landmark className="h-4 w-4" />} maxLength={9} value={form.AbaNumber} onChange={(e: any) => updateField('AbaNumber', e.target.value.replace(/\D/g, ''))} />
     <Input label="Account Number" id="AccountNumber" error={errors.AccountNumber} icon={<Hash className="h-4 w-4" />} maxLength={10} value={form.AccountNumber} onChange={(e: any) => updateField('AccountNumber', e.target.value.replace(/\D/g, '').slice(0, 10))} />
     <DatePicker
@@ -29,15 +29,15 @@ export const BankInformation = ({ form, errors, updateField }: any) => (
       id="AccountDate"
       error={errors.AccountDate}
       placeholder="MM/YYYY"
-      // ADD THIS LINE BELOW
       value={form.AccountDate ? new Date(form.AccountDate) : undefined}
       onDateChange={(d: any) => updateField('AccountDate', d)}
       disabled={(date: Date) => date > new Date()}
-    /> <div className="bg-slate-50/50 p-3 rounded-lg border border-slate-100">
-      <Label className="block text-[11px] font-bold text-slate-500 mb-2 uppercase tracking-wider">Account Type</Label>
-      <div className="flex space-x-6">
-        <CheckboxField label="Checking" id="at-checking" checked={form.AccountType === 'C'} onCheckedChange={() => updateField('AccountType', 'C')} />
-        <CheckboxField label="Savings" id="at-savings" checked={form.AccountType === 'S'} onCheckedChange={() => updateField('AccountType', 'S')} />
+    />
+    <div className="space-y-2">
+      <Label className="text-sm font-medium text-gray-700 block">Account Type</Label>
+      <div className="flex space-x-4 pt-1">
+        <CheckboxField label="Checking" id="at-checking" checked={form.AccountType === 'C'} onCheckedChange={() => updateField('AccountType', 'C')} color={borderColor} />
+        <CheckboxField label="Savings" id="at-savings" checked={form.AccountType === 'S'} onCheckedChange={() => updateField('AccountType', 'S')} color={borderColor} />
       </div>
     </div>
   </FormSection>

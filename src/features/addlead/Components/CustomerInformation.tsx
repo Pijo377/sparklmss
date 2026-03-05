@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
-import { Input, SelectField, DatePicker, CheckboxField } from './FormField';
+import { User } from 'lucide-react';
+import { Input, SelectField, DatePicker, CheckboxField, CurrencyField } from './FormField';
 import { FormSection } from './FormSection';
 import { alphaRegex, emailRegex, licenseRegex } from './PayrollUtils';
 import { addLeadsService } from '../Services/addleadsService';
@@ -10,14 +11,12 @@ import { usePreferredLanguages } from '../hooks/useLangiage';
 export const validateCustomer = (form: any, eighteenYearsAgo: Date) => {
   let errors: any = {};
 
-  // 1. Name Validation
   if (!form.FirstName) errors.FirstName = "First Name is required";
   else if (!alphaRegex.test(form.FirstName)) errors.FirstName = "Invalid format: Letters only";
 
   if (!form.LastName) errors.LastName = "Last Name is required";
   else if (!alphaRegex.test(form.LastName)) errors.LastName = "Invalid format: Letters only";
 
-  // 2. Contact Validation
   if (!form.Email) errors.Email = "Email is required";
   else if (!emailRegex.test(form.Email)) errors.Email = "Invalid format: Enter valid email";
 
@@ -27,21 +26,17 @@ export const validateCustomer = (form: any, eighteenYearsAgo: Date) => {
   if (!form.HomePhone) errors.HomePhone = "Home Phone is required";
   else if (form.HomePhone.replace(/\D/g, '').length < 10) errors.HomePhone = "10 digits required";
 
-  // 3. Date of Birth (18+)
   if (!form.DOB) errors.DOB = "DOB is required";
   else if (new Date(form.DOB) > eighteenYearsAgo) errors.DOB = "Must be 18+ years old";
 
-  // 4. Address & Residency
   if (!form.Address) errors.Address = "Address is required";
   if (!form.State) errors.State = "State is required";
   if (!form.City) errors.City = "City is required";
   if (!form.Zip) errors.Zip = "Zip is required";
   else if (form.Zip.length < 5) errors.Zip = "5 digits required";
 
-  // NEW: At Address Since Validation
   if (!form.AtAddressSince) errors.AtAddressSince = "Residency start date is required";
 
-  // 5. License Validation
   if (!form.DLState) errors.DLState = "License State is required";
   if (!form.License) {
     errors.License = "License Number is required";
@@ -49,7 +44,6 @@ export const validateCustomer = (form: any, eighteenYearsAgo: Date) => {
     errors.License = "Invalid format: 5-20 alphanumeric characters";
   }
 
-  // 6. Loan & Language Selection
   if (!form.LoanAmount) errors.LoanAmount = "Please select a Loan Amount";
   if (!form.Language) errors.Language = "Preferred Language is required";
 
@@ -60,12 +54,11 @@ export const CustomerInformation = ({
   form,
   errors,
   updateField,
-
   eighteenYearsAgo,
   formatPhone,
+  borderColor = 'blue'
 }: any) => {
 
-  // Fetching the correct loan options from your service logic
   const loanOptions = addLeadsService.getLoanAmountOptions().map(l => l.label);
   const { data: states } = useStates();
 
@@ -99,8 +92,6 @@ export const CustomerInformation = ({
     ])
   );
 
-  // Normalize form.State: if it's an ID or ShortCode, find the name.
-  // This helps when auto-filling with IDs or when hooks expect names.
   const currentStateName = states?.Table?.find((s: any) =>
     s.StateName === String(form.State) ||
     Number(s.StateID) === Number(form.State) ||
@@ -113,7 +104,6 @@ export const CustomerInformation = ({
     s.StateShortCode === String(form.DLState)
   )?.StateName || String(form.DLState || "");
 
-  // Sync back to form if normalized (optional but helpful for hooks)
   useEffect(() => {
     if (currentStateName && currentStateName !== form.State && states?.Table) {
       updateField('State', currentStateName);
@@ -127,7 +117,7 @@ export const CustomerInformation = ({
   }, [currentDLStateName, form.DLState, updateField, states?.Table]);
 
   return (
-    <FormSection title="Customer Information" colorClass="bg-blue-500">
+    <FormSection title="Customer Information" icon={<User />} borderColor={borderColor}>
 
       <Input
         label="First Name"
@@ -232,9 +222,6 @@ export const CustomerInformation = ({
         onValueChange={(v: any) => updateField("Zip", v)}
       />
 
-      {/* HOME STATUS CHECKBOXES */}
-
-
       <DatePicker
         label="At address since"
         id="AtAddressSince"
@@ -263,13 +250,13 @@ export const CustomerInformation = ({
         }
       />
 
-      <SelectField
+      <CurrencyField
         label="Loan Amount"
         id="LoanAmount"
         error={errors.LoanAmount}
         value={form.LoanAmount}
-        options={loanOptions}
-        onValueChange={(v: any) => updateField('LoanAmount', v)}
+        placeholder="0.00"
+        onChange={(v: any) => updateField('LoanAmount', v)}
       />
 
       <SelectField
@@ -282,8 +269,8 @@ export const CustomerInformation = ({
         placeholder="Select Language"
         onValueChange={(v: any) => updateField("Language", v)}
       />
-      <div className="space-y-1.5">
-        <Label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+      <div className="space-y-2">
+        <Label className="text-sm font-medium text-gray-700 block">
           Home Status
         </Label>
         <div className="flex space-x-4 pt-1">
@@ -292,12 +279,14 @@ export const CustomerInformation = ({
             id="home-own"
             checked={form.HomeStatus === 'O'}
             onCheckedChange={() => updateField('HomeStatus', 'O')}
+            color={borderColor}
           />
           <CheckboxField
             label="Rent"
             id="home-rent"
             checked={form.HomeStatus === 'R'}
             onCheckedChange={() => updateField('HomeStatus', 'R')}
+            color={borderColor}
           />
         </div>
       </div>

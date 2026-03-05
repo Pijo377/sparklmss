@@ -6,7 +6,7 @@ import { addLeadsService } from '../Services/addleadsService';
 import { Label } from '@/shared/components/ui/label';
 import { startOfDay } from 'date-fns';
 import { VinDetailsModal } from './VinDetailsModal';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Car } from 'lucide-react';
 
 export const validateVehicle = (form: any) => {
   let errors: any = {};
@@ -27,7 +27,7 @@ export const validateVehicle = (form: any) => {
   return errors;
 };
 
-export const VehicleInformation = ({ form, errors, updateField }: any) => {
+export const VehicleInformation = ({ form, errors, updateField, borderColor = 'rose' }: any) => {
   // Local state to handle dynamic "Add More Files"
   const [additionalDocs, setAdditionalDocs] = useState<number[]>([]);
   const [vinError, setVinError] = useState<string>("");
@@ -84,7 +84,7 @@ export const VehicleInformation = ({ form, errors, updateField }: any) => {
 
 
   return (
-    <FormSection title="Vehicle Information" colorClass="bg-amber-500">
+    <FormSection title="Vehicle Information" icon={<Car />} borderColor={borderColor}>
       {/* ROW 1 */}
       <Input label="Vehicle Year" id="vehYear" error={errors.vehYear} value={form.vehYear} onChange={(e: any) => updateField('vehYear', e.target.value)} />
       <Input label="Vehicle Make" id="vehMake" error={errors.vehMake} value={form.vehMake} onChange={(e: any) => updateField('vehMake', e.target.value)} />
@@ -95,19 +95,19 @@ export const VehicleInformation = ({ form, errors, updateField }: any) => {
       <div className="relative w-full">
         <div className="flex items-center gap-1 mb-1">
           <Label className="text-[11px] font-bold uppercase text-slate-500">VIN</Label>
-       <Button
-  variant="ghost"
-  type="button"
-  disabled={vinLoading || form.vin?.length !== 17}
-  onClick={handleVinLookup}
-  className="h-5 w-5 p-0 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200 disabled:opacity-60"
->
-  {vinLoading ? (
-    <Loader2 className="h-4 w-4 animate-spin" />
-  ) : (
-    "!"
-  )}
-</Button>
+          <Button
+            variant="ghost"
+            type="button"
+            disabled={vinLoading || form.vin?.length !== 17}
+            onClick={handleVinLookup}
+            className="h-5 w-5 p-0 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200 disabled:opacity-60"
+          >
+            {vinLoading ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              "!"
+            )}
+          </Button>
 
 
 
@@ -148,8 +148,8 @@ export const VehicleInformation = ({ form, errors, updateField }: any) => {
       <div className="space-y-1.5">
         <Label className="text-[11px] font-bold text-slate-500 uppercase">Vehicle is Paid-Off</Label>
         <div className="flex space-x-4 pt-1">
-          <CheckboxField label="Yes" id="po-yes" checked={form.paidOff === 'Y'} onCheckedChange={() => updateField('paidOff', 'Y')} />
-          <CheckboxField label="No" id="po-no" checked={form.paidOff === 'N'} onCheckedChange={() => updateField('paidOff', 'N')} />
+          <CheckboxField label="Yes" id="po-yes" checked={form.paidOff === 'Y'} onCheckedChange={() => updateField('paidOff', 'Y')} color={borderColor} />
+          <CheckboxField label="No" id="po-no" checked={form.paidOff === 'N'} onCheckedChange={() => updateField('paidOff', 'N')} color={borderColor} />
         </div>
       </div>
 

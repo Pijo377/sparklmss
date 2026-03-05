@@ -43,10 +43,6 @@ export const formatPhoneNumber = (value: string): string => {
 
 /* -------------------- Basic Validators -------------------- */
 
-const required =
-  (label: string): PortfolioFieldValidator =>
-    (value) =>
-      isBlank(value) ? `*${label} is required` : null;
 
 const email =
   (label: string): PortfolioFieldValidator =>
@@ -56,49 +52,10 @@ const email =
       return isValid ? null : `* Please enter Valid Email.`;
     };
 
-const phone10 =
-  (label: string): PortfolioFieldValidator =>
-    (value) => {
-      const digits = digitsOnly(value);
-      if (digits.length !== 10)
-        return `*${label} is required`;
-      return null;
-    };
 
-const zipUS =
-  (label: string): PortfolioFieldValidator =>
-    (value) => {
-      const v = String(value ?? "").trim();
-      const isValid =
-        /^\d{5}$/.test(v) ||
-        /^\d{9}$/.test(v) ||
-        /^\d{5}-\d{4}$/.test(v);
-      return isValid
-        ? null
-        : `*Zip is required`;
-    };
 
-const integerRange =
-  (label: string, min: number, max: number): PortfolioFieldValidator =>
-    (value) => {
-      const num =
-        typeof value === "number" ? value : Number(value);
 
-      if (!Number.isFinite(num) || !Number.isInteger(num))
-        return `*${label} is required`;
 
-      if (num < min || num > max)
-        return `*${label} must be between ${min} and ${max}.`;
-
-      return null;
-    };
-
-const requiredSelect =
-  (label: string): PortfolioFieldValidator =>
-    (value) =>
-      String(value ?? "").trim() === ""
-        ? `*${label} is required`
-        : null;
 
 /* -------------------- Portfolio Validators -------------------- */
 

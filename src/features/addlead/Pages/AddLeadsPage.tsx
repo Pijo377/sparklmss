@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Zap, Award, Save, RotateCcw, Loader2 } from 'lucide-react';
 
-import { SelectField, CheckboxField } from '../Components/FormField';
+import { SelectField, CheckboxField, Input as FormInput } from '../Components/FormField';
 import { addLeadsService, getCampaignType } from '../Services/addleadsService';
 import { FREQUENCY_MAP, calculateNextPayday, formatPhone, formatSSN, scrollToError, isAllowedDay } from '../Components/PayrollUtils';
 import { CustomerInformation, validateCustomer } from '../Components/CustomerInformation';
@@ -9,12 +9,11 @@ import { EmployerInformation, validateEmployer } from '../Components/EmployerInf
 import { BankInformation, validateBank } from '../Components/BankInformation';
 import { VehicleInformation, validateVehicle } from '../Components/VehicleInformation';
 import { ReferenceInformation, validateReference } from '../Components/ReferenceInformation';
-import { isSameDay, startOfDay, addDays } from 'date-fns'; // Added addDays here
-import { Card, CardContent } from '../Components/ui/card';
+import {  addDays } from 'date-fns'; // Added addDays here
+import Card from '@/shared/components/ui/card';
 import { Button } from '../Components/ui/button';
 import { Label } from '../Components/ui/label';
-import { Input } from '../Components/ui/input';
-import { Separator } from '../Components/ui/separator';
+
 import { generateXML } from '../helper/xmlformat';
 import { toast } from 'sonner';
 import { useCampaignDetailsForInternalLeads } from '../hooks/useGetCampaign';
@@ -52,16 +51,13 @@ export default function AddLeadsPage() {
   const [showCustomerModal, setShowCustomerModal] = useState(false);
 
   const {
-    data: campaignDetails,
     refetch: fetchCampaignDetails,
-    isFetching: isCampaignLoading,
   } = useCampaignDetailsForInternalLeads(
     "ADD",        // LeadFrom
     0,            // LoanID
     campaignType  // Type (A/L/I/P/C)
   );
   const {
-    data: customerDetails,
     refetch: fetchCustomerDetails,
     isFetching: isCustomerLoading,
   } = useFindCustomerDetails(
@@ -133,11 +129,13 @@ export default function AddLeadsPage() {
       AccountNumber: Math.floor(1000000000 + Math.random() * 899999999).toString(),
       AccountDate: addDays(today, -800).toISOString(),
       AccountType: "C",
-      RefName1: firstNames[0] + " " + lastNames[0],
+      RefFirstName1: firstNames[0],
+      RefLastName1: lastNames[0],
       RefRelation1: "Friend",
       RefPhone1: "5551112222",
       RefEmail1: "ref1@test.com",
-      RefName2: firstNames[1] + " " + lastNames[1],
+      RefFirstName2: firstNames[1],
+      RefLastName2: lastNames[1],
       RefRelation2: "Sibling",
       RefPhone2: "5553334444",
       RefEmail2: "ref2@test.com",
@@ -527,12 +525,14 @@ export default function AddLeadsPage() {
       AccountType: bank?.BANK_ACC_TYPE || "",
 
       // --- Reference Info ---
-      RefName1: references[0] ? `${references[0].REF_FIRSTNAME || ""} ${references[0].REF_LASTNAME || ""}` : "",
+      RefFirstName1: references[0]?.REF_FIRSTNAME || "",
+      RefLastName1: references[0]?.REF_LASTNAME || "",
       RefRelation1: references[0]?.REF_RELATION || "",
       RefPhone1: references[0]?.REF_MOBILENUMBER || references[0]?.REF_HOMEPHONE || "",
       RefEmail1: references[0]?.REF_EMAIL || "",
 
-      RefName2: references[1] ? `${references[1].REF_FIRSTNAME || ""} ${references[1].REF_LASTNAME || ""}` : "",
+      RefFirstName2: references[1]?.REF_FIRSTNAME || "",
+      RefLastName2: references[1]?.REF_LASTNAME || "",
       RefRelation2: references[1]?.REF_RELATION || "",
       RefPhone2: references[1]?.REF_MOBILENUMBER || references[1]?.REF_HOMEPHONE || "",
       RefEmail2: references[1]?.REF_EMAIL || "",
@@ -578,147 +578,164 @@ export default function AddLeadsPage() {
 
 
   return (
-    <div className="min-h-screen py-4 px-2 md:py-8 md:px-4 bg-[#f8fafc]">
+    <div className="min-h-screen p-6 bg-[#f8fafc]">
       <div className="max-w-[1500px] mx-auto">
-        <Card className="border-slate-200 shadow-sm bg-white rounded-xl overflow-hidden">
-          <CardContent className="pt-4 px-3 pb-6 md:p-12">
-            {/* PAGE HEADER */}
-            <div className="mb-8 border-b border-slate-100 pb-6 flex justify-between items-center">
-              <div>
-                <h1 className="text-2xl md:text-3xl font-bold text-slate-900 leading-tight">Add Leads</h1>
-                <p className="text-slate-400 mt-1 font-medium text-sm md:text-base"> SparkLMS Portal</p>
-              </div>
+        {/* PAGE HEADER */}
+        <div className="mb-2 pb-2 flex justify-between items-center">
+          <div>
+            <h1 className="text-2xl md:text-3xl font-bold text-slate-900 leading-tight">Add Leads</h1>
+            <p className="text-slate-400 mt-1 font-medium text-sm md:text-base"> SparkLMS Portal</p>
+          </div>
 
-              {/* --- GENERATE BUTTON ADDED HERE --- */}
-              <Button
-                onClick={generateRandomData}
-                className="bg-blue-50 text-blue-600 border border-blue-200 hover:bg-blue-600 hover:text-white transition-all font-bold shadow-none"
-              >
-                <Zap className="mr-2 h-4 w-4" />
-                Auto-Generate Data
-              </Button>
+          <Button
+            onClick={generateRandomData}
+            className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-5 h-9 rounded-md shadow-none transition-all"
+          >
+            <Zap className="mr-2 h-4 w-4" />
+            Auto-Generate Data
+          </Button>
+        </div>
+
+        {/* TOP CONTROLS: LOAN TYPE & SSN SEARCH */}
+        <Card className="p-4 mb-6 border-indigo-300 border">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-end">
+            <div className="md:col-span-3">
+              <SelectField
+                label="Select Loan Type"
+                value={form.LoanType}
+                id="LoanType"
+                error={errors.LoanType}
+                options={["CAB/CSO", "Auto Title", "Line of Credit", "Installment", "Pay Day"]}
+                onValueChange={(v) => updateField('LoanType', v)}
+              />
             </div>
-
-            {/* TOP CONTROLS: LOAN TYPE & SSN SEARCH */}
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-8 mb-12 items-end">
-              <div className="md:col-span-3">
-                <SelectField
-                  label="Select Loan Type"
-                  value={form.LoanType}
-                  id="LoanType"
-                  error={errors.LoanType}
-                  options={["CAB/CSO", "Auto Title", "Line of Credit", "Installment", "Pay Day"]}
-                  onValueChange={(v) => updateField('LoanType', v)}
-                />
-              </div>
-              <div className="md:col-span-3 pb-2">
-                {form.LoanType === 'CAB/CSO' && (
-                  <div className="animate-in slide-in-from-top-1 duration-300">
-                    <Label className="block text-[11px] font-bold text-slate-500 mb-3 uppercase tracking-wider">Is Autotitle</Label>
-                    <div className="flex space-x-6">
-                      <CheckboxField label="Yes" id="aty" checked={form.isAutoTitle === 'Y'} onCheckedChange={() => updateField('isAutoTitle', 'Y')} />
-                      <CheckboxField label="No" id="atn" checked={form.isAutoTitle === 'N'} onCheckedChange={() => updateField('isAutoTitle', 'N')} />
-                    </div>
+            <div className="md:col-span-3 pb-2">
+              {form.LoanType === 'CAB/CSO' && (
+                <div className="animate-in slide-in-from-top-1 duration-300">
+                  <Label className="block text-[11px] font-bold text-slate-500 mb-3 uppercase tracking-wider">Is Autotitle</Label>
+                  <div className="flex space-x-6">
+                    <CheckboxField label="Yes" id="aty" checked={form.isAutoTitle === 'Y'} onCheckedChange={() => updateField('isAutoTitle', 'Y')} color="indigo" />
+                    <CheckboxField label="No" id="atn" checked={form.isAutoTitle === 'N'} onCheckedChange={() => updateField('isAutoTitle', 'N')} color="indigo" />
                   </div>
-                )}
-              </div>
-              <div className="md:col-span-6">
-                <Label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2 block">SSN / ITIN Search</Label>
-                <div className="flex gap-3">
-                  <Input
-                    value={formatSSN(form.SSN)}
-                    onChange={(e) => updateField('SSN', e.target.value)}
-                    maxLength={11}
-                    className={`custom-input border-none rounded-r-none !h-11 ${errors.SSN ? 'ring-1 ring-red-500' : 'bg-slate-50 ring-1 ring-slate-200'}`}
-                    placeholder="000-00-0000"
-                  />
-                  <Button
-                    onClick={handleFindCustomer}
-                    variant="outline"
-                    disabled={isCustomerLoading}
-                    className="h-[44px] px-6 bg-slate-50 shadow-sm border-b-2 rounded-l-md rounded-r-md flex items-center gap-2"
-                  >
-                    {isCustomerLoading ? (
-                      <>
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                        Finding...
-                      </>
-                    ) : (
-                      "Find"
-                    )}
-                  </Button>
-
                 </div>
-                {errors.SSN && <p className="text-[10px] text-red-500 font-medium mt-1">*{errors.SSN}</p>}
+              )}
+            </div>
+            <div className="md:col-span-6">
+              <div className="flex gap-3 items-end">
+                <FormInput
+                  label="SSN / ITIN Search"
+                  id="SSN"
+                  value={formatSSN(form.SSN)}
+                  error={errors.SSN}
+                  onChange={(e: any) => updateField('SSN', e.target.value)}
+                  onKeyPress={(e: any) => {
+                    if (!/[0-9]/.test(e.key)) {
+                      e.preventDefault();
+                    }
+                  }}
+                  maxLength={11}
+                  placeholder="000-00-0000"
+                />
+                <Button
+                  onClick={handleFindCustomer}
+                  disabled={isCustomerLoading}
+                  className="bg-blue-600 hover:bg-blue-700 text-white h-[44px] px-6 font-bold rounded-md shadow-sm flex items-center gap-2 mb-[1px]"
+                >
+                  {isCustomerLoading ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Finding...
+                    </>
+                  ) : (
+                    "Find"
+                  )}
+                </Button>
               </div>
             </div>
-            <Separator className="my-12 bg-slate-100" />
-            {/* MODULAR FORM SECTIONS */}
-            <CustomerInformation
-              form={form}
-              errors={errors}
-              updateField={updateField}
-              eighteenYearsAgo={eighteenYearsAgo}
-              formatPhone={formatPhone}
-            />
-            <EmployerInformation
-              form={form}
-              errors={errors}
-              updateField={updateField}
-              paydayMode={paydayMode}
-              howPaidOptions={howPaidOptions}
-              handleFrequencyChange={handleFrequencyChange}
-              handleHowPaidSelect={handleHowPaidSelect}
-              formatPhone={formatPhone}
-              states={states}
-              employerCount={employerCount}
-              setEmployerCount={setEmployerCount}
-            />
-            <BankInformation
-              form={form}
-              errors={errors}
-              updateField={updateField}
-            />
-            <VehicleInformation
-              form={form}
-              errors={errors}
-              updateField={updateField}
-            />
-            <ReferenceInformation
-              form={form}
-              errors={errors}
-              updateField={updateField}
-              formatPhone={formatPhone}
-            />
-            {/* ADDITIONAL INFORMATION: MILITARY STATUS */}
-            <div className="bg-blue-50/30 border border-blue-100 rounded-xl p-6 flex flex-col md:flex-row justify-between items-center mb-6">
+          </div>
+        </Card>
+
+        {/* MODULAR FORM SECTIONS */}
+        <CustomerInformation
+          form={form}
+          errors={errors}
+          updateField={updateField}
+          eighteenYearsAgo={eighteenYearsAgo}
+          formatPhone={formatPhone}
+          borderColor="blue"
+        />
+        <EmployerInformation
+          form={form}
+          errors={errors}
+          updateField={updateField}
+          paydayMode={paydayMode}
+          howPaidOptions={howPaidOptions}
+          handleFrequencyChange={handleFrequencyChange}
+          handleHowPaidSelect={handleHowPaidSelect}
+          formatPhone={formatPhone}
+          states={states}
+          employerCount={employerCount}
+          setEmployerCount={setEmployerCount}
+          borderColor="purple"
+        />
+        <BankInformation
+          form={form}
+          errors={errors}
+          updateField={updateField}
+          borderColor="amber"
+        />
+        <VehicleInformation
+          form={form}
+          errors={errors}
+          updateField={updateField}
+          borderColor="red"
+        />
+        <ReferenceInformation
+          form={form}
+          errors={errors}
+          updateField={updateField}
+          formatPhone={formatPhone}
+          borderColor="indigo"
+        />
+        {/* COMBINED MILITARY STATUS & ACTIONS CARD */}
+        <Card className="p-6 mb-12 border-rose-300 border">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+            {/* MILITARY STATUS */}
+            <div className="flex flex-col md:flex-row items-center gap-4 bg-slate-50 border border-slate-100 p-4 rounded-xl flex-1 w-full md:w-auto">
               <div className="flex items-center">
-                <Award className="text-blue-500 mr-3 h-5 w-5" />
-                <Label className="text-sm font-medium text-slate-700">Claimed as a dependent by active military?</Label>
+                <div className="bg-blue-100 p-2 rounded-lg mr-3">
+                  <Award className="text-blue-600 h-5 w-5" />
+                </div>
+                <div>
+                  <Label className="text-sm font-bold text-slate-800 block">Military Dependent</Label>
+                  <p className="text-[11px] text-slate-500 font-medium">Claimed as a dependent by active military?</p>
+                </div>
               </div>
-              <div className="bg-white px-6 py-2 rounded-lg border border-slate-200 flex space-x-8 mt-4 md:mt-0">
-                <CheckboxField label="Yes" id="mil-y" checked={form.militarymem === '1'} onCheckedChange={() => updateField('militarymem', '1')} />
-                <CheckboxField label="No" id="mil-n" checked={form.militarymem === '0'} onCheckedChange={() => updateField('militarymem', '0')} />
+              <div className="bg-white px-4 py-1.5 rounded-lg border border-slate-200 flex space-x-6">
+                <CheckboxField label="Yes" id="mil-y" checked={form.militarymem === '1'} onCheckedChange={() => updateField('militarymem', '1')} color="rose" />
+                <CheckboxField label="No" id="mil-n" checked={form.militarymem === '0'} onCheckedChange={() => updateField('militarymem', '0')} color="rose" />
               </div>
             </div>
-            {/* FOOTER ACTIONS */}
-            <div className="flex flex-col md:flex-row justify-end pt-8 gap-3 border-t border-slate-100">
+
+            {/* ACTION BUTTONS */}
+            <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
               <Button
                 onClick={handleSubmit}
-                className="bg-white text-emerald-600 border border-slate-200 border-b-2 border-b-slate-300 hover:bg-emerald-50 px-10 h-11 font-bold rounded-lg shadow-none"
+                className="bg-blue-600 hover:bg-blue-700 text-white px-8 h-10 font-bold rounded-md shadow-none"
               >
                 <Save className="mr-2 h-4 w-4" /> Submit Lead
               </Button>
               <Button
                 onClick={() => window.location.reload()}
                 variant="outline"
-                className="text-red-500 border-slate-200 border-b-2 border-b-slate-300 px-10 h-11 font-bold rounded-lg shadow-none"
+                className="border-red-400 text-red-600 hover:bg-red-50 px-8 h-10 font-bold rounded-md shadow-none"
               >
                 <RotateCcw className="mr-2 h-4 w-4" /> Cancel
               </Button>
             </div>
-          </CardContent>
+          </div>
         </Card>
+
       </div>
       <CustomModal
         isOpen={showCustomerModal}

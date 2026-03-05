@@ -35,6 +35,7 @@ export interface CheckboxProps {
   id: string;
   checked: boolean;
   onCheckedChange: (checked: boolean) => void;
+  color?: string;
 }
 
 export interface FormSectionProps {

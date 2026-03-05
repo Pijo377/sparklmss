@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { loadStates, type LoadStatesResponse, type State } from "../api/states.api";
+import { loadStates, type LoadStatesResponse, } from "../api/states.api";
 import { getCityInfo, type GetCityInfoResponse } from "../api/city.api";
 import { getZipInfo, type GetZipInfoResponse } from "../api/zip.api";
 

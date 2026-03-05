@@ -1,11 +1,11 @@
 import { Label } from './ui/label';
-import { Input, SelectField, DatePicker, CheckboxField } from './FormField';
+import { Input, SelectField, DatePicker, CheckboxField, CurrencyField } from './FormField';
 import { FormSection } from './FormSection';
 
 import { MON_FRI, WEEKS_FIRST_THIRD, WEEKS_LATE, WEEKS_FULL, isAllowedDay, calculateNextPayday } from './PayrollUtils';
 import { isSameDay, startOfDay, addDays } from 'date-fns';
 import { Button } from './ui/button';
-import { Trash2, Plus } from 'lucide-react';
+import { Trash2, Plus, Briefcase } from 'lucide-react';
 import { HolidayAwareDatePicker } from './HolidayAwareDatePicker';
 
 const mapPaydayFields = (form: any, sfx: string | number) => ({
@@ -19,10 +19,6 @@ const mapPaydayFields = (form: any, sfx: string | number) => ({
   MonthlyPayDay: form['MonthlyPayDay' + sfx],
 });
 
-/**
- * MASTER VALIDATION FOR EMPLOYER SECTION
- * Handles multiple employers by checking suffixes
- */
 export const validateEmployer = (
   form: any,
   paydayMode: Record<number, string> | undefined,
@@ -45,6 +41,10 @@ export const validateEmployer = (
       if (!form['EmployerName' + sfx]) errors['EmployerName' + sfx] = "Employer Name required";
       if (!form['WorkPhone' + sfx]) errors['WorkPhone' + sfx] = "Work Phone required";
       else if (form['WorkPhone' + sfx].replace(/\D/g, '').length < 10) errors['WorkPhone' + sfx] = "10 digits required";
+      if (!form['EmployerState' + sfx]) errors['EmployerState' + sfx] = "State required";
+      if (!form['EmployerCity' + sfx]) errors['EmployerCity' + sfx] = "City required";
+      if (!form['EmployerZip' + sfx]) errors['EmployerZip' + sfx] = "Zip required";
+      else if (form['EmployerZip' + sfx].length < 5) errors['EmployerZip' + sfx] = "5 digits required";
     }
 
     if (form['SourceIncome' + sfx] === 'Other' && !form['OtherIncomeType' + sfx]) {
@@ -55,10 +55,6 @@ export const validateEmployer = (
     if (!form['GrossPay' + sfx]) errors['GrossPay' + sfx] = "Pay amount required";
     if (!form['Frequency' + sfx]) errors['Frequency' + sfx] = "Frequency required";
     if (!form['HowPaid' + sfx]) errors['HowPaid' + sfx] = "Method required";
-
-    // 4. Payday Mode Specifics (Only for primary employer logic)
-    // 4. Payday Mode Specifics (PER EMPLOYER)
-
 
     if (mode === 'day_of_week' && !form['DayOfWeek' + sfx]) {
       errors['DayOfWeek' + sfx] = "Select day";
@@ -126,7 +122,7 @@ export const validateEmployer = (
 export const EmployerInformation = ({
   form, errors, updateField, paydayMode, howPaidOptions,
   handleFrequencyChange, handleHowPaidSelect, formatPhone,
-  employerCount, setEmployerCount, states
+  employerCount, setEmployerCount, borderColor = 'emerald'
 }: any) => {
   const today = startOfDay(new Date());
   const isWeekend = (date: Date) => date.getDay() === 0 || date.getDay() === 6;
@@ -143,7 +139,7 @@ export const EmployerInformation = ({
     ];
 
     fieldsToClear.forEach(field => {
-      updateField(field + sfx, ''); // Sets every field for this index to empty string
+      updateField(field + sfx, '');
     });
   };
   const adjustToMonday = (date: Date | null | undefined) => {
@@ -173,7 +169,7 @@ export const EmployerInformation = ({
   return (
     <>
       {[...Array(employerCount)].map((_, index) => {
-        const sfx = index === 0 ? "" : index.toString();// Unique suffix for each form instance
+        const sfx = index === 0 ? "" : index.toString();
         const currentIncomeOptions = form['EmploymentType' + sfx] === 'Other'
           ? incomeOptions.filter(opt => opt !== "Employed")
           : incomeOptions;
@@ -181,14 +177,14 @@ export const EmployerInformation = ({
           <FormSection
             key={index}
             title={index === 0 ? "Employer & Payroll Information" : `Secondary Employer #${index}`}
-            colorClass="bg-emerald-500"
+            icon={<Briefcase />}
+            borderColor={borderColor}
             extra={index !== 0 ? (
               <Button
                 variant="ghost"
                 onClick={() => {
-                  // UPDATE THIS ONCLICK
-                  clearEmployerData(index); // Clear the data first
-                  setEmployerCount((prev: number) => prev - 1); // Then remove the form
+                  clearEmployerData(index);
+                  setEmployerCount((prev: number) => prev - 1);
                 }}
                 className="w-full md:w-auto text-red-500 hover:bg-red-50 h-10 md:h-9"
               >
@@ -214,11 +210,11 @@ export const EmployerInformation = ({
               error={errors['SourceIncome' + sfx]}
               value={form['SourceIncome' + sfx]}
               placeholder="--Select--"
-              options={currentIncomeOptions} // Using filtered options
+              options={currentIncomeOptions}
               onValueChange={(v: any) => updateField('SourceIncome' + sfx, v)}
             />
 
-            {/* HIDDEN FIELDS FOR EMPLOYED (UNIQUE PER INDEX) */}
+            {/* HIDDEN FIELDS FOR EMPLOYED */}
             {form['SourceIncome' + sfx] === 'Employed' && (
               <>
                 <Input label="Employer Name" id={"EmployerName" + sfx} error={errors['EmployerName' + sfx]} value={form['EmployerName' + sfx]} onChange={(e: any) => updateField('EmployerName' + sfx, e.target.value)} />
@@ -235,26 +231,29 @@ export const EmployerInformation = ({
                 />
                 <Input label="City" id={"EmployerCity" + sfx} error={errors['EmployerCity' + sfx]} value={form['EmployerCity' + sfx]} onChange={(e: any) => updateField('EmployerCity' + sfx, e.target.value)} />
                 <Input label="Zip" id={"EmployerZip" + sfx} error={errors['EmployerZip' + sfx]} maxLength={5} onChange={(e: any) => updateField('EmployerZip' + sfx, e.target.value)} value={form['EmployerZip' + sfx]} />
-                {/* <Input label="Supervisor Name" onChange={(e: any) => updateField('SupervisorName' + sfx, e.target.value)} value={form.SupervisorName} />
-                <Input label="Supervisor Phone" type="tel" onChange={(e: any) => updateField('SupervisorPhone' + sfx, formatPhone(e.target.value))} value={form.SupervisorPhone} /> */}
                 <DatePicker label="Emp Start Date" onDateChange={(d: any) => updateField('EmpStartDate' + sfx, d)} value={form['EmpStartDate' + sfx] ? new Date(form['EmpStartDate' + sfx]) : undefined} disabled={(date: any) => date > today} />
               </>
             )}
 
             {form['SourceIncome' + sfx] === 'Other' && <Input label="Specify Other Income Type" value={form['OtherIncomeType' + sfx] || ""} id={"OtherIncomeType" + sfx} error={errors['OtherIncomeType' + sfx]} onChange={(e: any) => updateField('OtherIncomeType' + sfx, e.target.value)} />}
 
-            <Input label="Last Check Amount" id={"GrossPay" + sfx} error={errors['GrossPay' + sfx]} value={form['GrossPay' + sfx]} prefix="$" placeholder="0.00" onChange={(e: any) => updateField('GrossPay' + sfx, e.target.value)} />
-            {/* INCOME METHOD CHECKBOXES (UNIQUE PER INDEX) */}
-            <div className="space-y-1.5">
-              <Label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Income Method</Label>
+            <CurrencyField
+              label="Last Check Amount"
+              id={"GrossPay" + sfx}
+              error={errors['GrossPay' + sfx]}
+              value={form['GrossPay' + sfx]}
+              placeholder="0.00"
+              onChange={(val: any) => updateField('GrossPay' + sfx, val)}
+            />
+            {/* INCOME METHOD CHECKBOXES */}
+            <div className="space-y-2">
+              <Label className="text-sm font-medium text-gray-700 block">Income Method</Label>
               <div className="flex space-x-4 pt-1">
-                <CheckboxField label="Direct Deposit" id={`im-d-${index}`} checked={form['ReceivePaycheck' + sfx] === 'D'} onCheckedChange={() => updateField('ReceivePaycheck' + sfx, 'D')} />
-                <CheckboxField label="Paper Check" id={`im-p-${index}`} checked={form['ReceivePaycheck' + sfx] === 'P'} onCheckedChange={() => updateField('ReceivePaycheck' + sfx, 'P')} />
+                <CheckboxField label="Direct Deposit" id={`im-d-${index}`} checked={form['ReceivePaycheck' + sfx] === 'D'} onCheckedChange={() => updateField('ReceivePaycheck' + sfx, 'D')} color={borderColor} />
+                <CheckboxField label="Paper Check" id={`im-p-${index}`} checked={form['ReceivePaycheck' + sfx] === 'P'} onCheckedChange={() => updateField('ReceivePaycheck' + sfx, 'P')} color={borderColor} />
               </div>
             </div>
 
-            {/* PAYROLL SETTINGS (Only primary logic for cascading modes) */}
-            {/* Change this line: */}
             <SelectField
               label="How often do you receive a paycheck?"
               id={"Frequency" + sfx}
@@ -262,11 +261,10 @@ export const EmployerInformation = ({
               options={["Weekly", "Every Other Week", "Semi-Monthly", "Monthly"]}
               value={form['Frequency' + sfx]}
               onValueChange={(v: any) => {
-                updateField('Frequency' + sfx, v); // This clears the error
-                handleFrequencyChange(v, index);   // This updates the logic
+                updateField('Frequency' + sfx, v);
+                handleFrequencyChange(v, index);
               }}
             />
-            {/* Change this line: */}
             <SelectField
               label="How Paid"
               id={"HowPaid" + sfx}
@@ -275,13 +273,11 @@ export const EmployerInformation = ({
               options={(howPaidOptions[index] || []).map((o: any) => o.label)}
               value={form['HowPaid' + sfx]}
               onValueChange={(v: any) => {
-                updateField('HowPaid' + sfx, v); // This clears the error
-                handleHowPaidSelect(v, index);   // This updates the logic
+                updateField('HowPaid' + sfx, v);
+                handleHowPaidSelect(v, index);
               }}
             />
 
-            { /* CASCADING PAYDAY FIELDS (Controlled by Parent Mode) */}
-            {/* CASCADING PAYDAY FIELDS — PER EMPLOYER */}
             <>
               {paydayMode[index] === 'day_of_week' && (
                 <SelectField
@@ -439,15 +435,14 @@ export const EmployerInformation = ({
             />
 
             {index === employerCount - 1 && employerCount < 3 && (
-              <div className="col-span-full flex justify-start mt-4">
+              <div className="col-span-full flex justify-end ">
                 <Button
-                  variant="outline"
                   onClick={() =>
                     setEmployerCount((prev: number) => Math.min(prev + 1, 3))
                   }
-                  className="text-emerald-600 font-bold px-4 border-emerald-100 bg-emerald-50 h-9"
+                  className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-5 h-9 rounded-md"
                 >
-                  <Plus className="mr-1 h-5 w-5" />
+                  <Plus className="mr-1 h-4 w-4" />
                   Add More
                 </Button>
               </div>
