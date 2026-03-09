@@ -9,7 +9,7 @@ import { VinDetailsModal } from './VinDetailsModal';
 import { Loader2, Car } from 'lucide-react';
 
 export const validateVehicle = (form: any) => {
-  let errors: any = {};
+  const errors: any = {};
   const isVisible = form.LoanType === 'Auto Title' || form.isAutoTitle === 'Y';
 
   if (isVisible) {

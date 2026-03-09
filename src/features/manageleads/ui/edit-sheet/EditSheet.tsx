@@ -19,11 +19,12 @@ import { DragReorderField } from "@/shared/components/ui/drag-reorder-field";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/components/ui/select";
 import { PasswordField } from "@/shared/components/ui/password-field";
 import { WeeklySchedule, type WeeklyScheduleValue } from "@/shared/components/ui/weekly-schedule";
+import { MinutesInput } from "@/shared/components/ui/minutes-input";
 // 2️⃣ TYPE DEFINITIONS
 export interface EditSheetField {
   key: string;
   label: string;
-  type?: "text" | "number" | "currency" | "date" | "time" | "select" | "textarea" | "checkbox" | "drag-reorder" | "password" | "schedule";
+  type?: "text" | "number" | "currency" | "date" | "time" | "select" | "textarea" | "checkbox" | "drag-reorder" | "password" | "schedule" | "minutes";
   options?: { value: string; label: string }[];
   optionsIf?: (data: Record<string, unknown>) => { value: string; label: string }[]; // New: Dynamic options based on form data
   editable?: boolean;
@@ -389,7 +390,7 @@ function EditSheetForm<T extends Record<string, unknown>>({
             rows={4}
             className={`w-full px-4 py-3 text-sm bg-white border rounded-xl resize-none focus:outline-none focus:ring-2 disabled:bg-gray-50 disabled:text-gray-500 disabled:cursor-not-allowed transition-all duration-200 ${errorClass}`}
           />
-          {isAtMaxLength && <p className="mt-1 text-xs text-red-600 font-medium">Max limit of {field.maxLength} characters</p>}
+          {isAtMaxLength && <p className="mt-1 text-[11px] text-red-600 block">* max limit for the fields is {field.maxLength}</p>}
           {error && !isAtMaxLength && <p className="mt-1 text-xs text-red-600">{error}</p>}
         </div>
       );
@@ -451,7 +452,7 @@ function EditSheetForm<T extends Record<string, unknown>>({
             maxLength={field.maxLength}
             className={`h-11 px-4 text-sm bg-white border rounded-xl focus:outline-none focus:ring-2 disabled:bg-gray-50 disabled:text-gray-500 disabled:cursor-not-allowed transition-all duration-200 ${errorClass}`}
           />
-          {isAtMaxLength && <p className="mt-1 text-xs text-red-600 font-medium">Max limit of {field.maxLength} characters</p>}
+          {isAtMaxLength && <p className="mt-1 text-[11px] text-red-600 block">* max limit for the fields is {field.maxLength}</p>}
           {error && !isAtMaxLength && <p className="mt-1 text-xs text-red-600">{error}</p>}
         </div>
       );
@@ -464,6 +465,23 @@ function EditSheetForm<T extends Record<string, unknown>>({
             value={value as WeeklyScheduleValue}
             onChange={(val) => handleChange(field.key, val)}
             disabled={!isEditable}
+          />
+          {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
+        </div>
+      );
+    }
+
+    if (field.type === "minutes") {
+      return (
+        <div>
+          <MinutesInput
+            id={field.key}
+            value={Number(value || 0)}
+            onChange={(val) => handleChange(field.key, val)}
+            disabled={!isEditable}
+            min={field.min}
+            max={field.max}
+            error={error}
           />
           {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
         </div>
@@ -510,7 +528,7 @@ function EditSheetForm<T extends Record<string, unknown>>({
             className={`h-11 px-4 text-sm bg-white border rounded-xl focus:outline-none focus:ring-2 disabled:bg-gray-50 disabled:text-gray-500 disabled:cursor-not-allowed transition-all duration-200 ${errorClass}`}
           />
         )}
-        {isAtMaxLength && <p className="mt-1 text-xs text-red-600 font-medium">Max limit of {field.maxLength} characters</p>}
+        {isAtMaxLength && <p className="mt-1 text-[11px] text-red-600 block">* max limit for the fields is {field.maxLength}</p>}
         {error && !isAtMaxLength && <p className="mt-1 text-xs text-red-600">{error}</p>}
       </div>
     );

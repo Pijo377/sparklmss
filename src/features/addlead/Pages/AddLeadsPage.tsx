@@ -9,7 +9,7 @@ import { EmployerInformation, validateEmployer } from '../Components/EmployerInf
 import { BankInformation, validateBank } from '../Components/BankInformation';
 import { VehicleInformation, validateVehicle } from '../Components/VehicleInformation';
 import { ReferenceInformation, validateReference } from '../Components/ReferenceInformation';
-import {  addDays } from 'date-fns'; // Added addDays here
+import { addDays } from 'date-fns'; // Added addDays here
 import Card from '@/shared/components/ui/card';
 import { Button } from '../Components/ui/button';
 import { Label } from '../Components/ui/label';

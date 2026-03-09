@@ -25,7 +25,7 @@ export const validateEmployer = (
   employerCount: number
 ) => {
 
-  let errors: any = {};
+  const errors: any = {};
   const today = startOfDay(new Date());
   const modeMap = paydayMode || {};
   for (let i = 0; i < employerCount; i++) {

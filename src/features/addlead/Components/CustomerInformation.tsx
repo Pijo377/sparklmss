@@ -9,7 +9,7 @@ import { useCityInfo, useStates, useZipInfo } from '../hooks/useStates';
 import { usePreferredLanguages } from '../hooks/useLangiage';
 
 export const validateCustomer = (form: any, eighteenYearsAgo: Date) => {
-  let errors: any = {};
+  const errors: any = {};
 
   if (!form.FirstName) errors.FirstName = "First Name is required";
   else if (!alphaRegex.test(form.FirstName)) errors.FirstName = "Invalid format: Letters only";

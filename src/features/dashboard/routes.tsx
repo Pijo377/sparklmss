@@ -12,6 +12,7 @@ import PortfolioMapping from "@/features/manageleads/pages/PortfolioMapping";
 import BlacklistManagement from "@/features/blacklist/pages/BlacklistManagement";
 import ACHFile from "@/features/achfile/page/achfile";
 import AchProvider from "@/features/achprovider/page/AchProvider";
+import AutoOrigination from "@/features/AutoOrigination/pages/AutoOrigination";
 import DummyPage from "./pages/Dummy";
 
 export const dashboardRoutes: RouteObject = {
@@ -46,7 +47,7 @@ export const dashboardRoutes: RouteObject = {
         { path: "config/ach-file", element: <ACHFile /> },
         { path: "config/ach-provider", element: <AchProvider /> },
         { path: "config/bureau", element: <DummyPage title="Bureau" /> },
-        { path: "config/auto-origination", element: <DummyPage title="Auto Origination" /> },
+        { path: "config/auto-origination", element: <AutoOrigination /> },
         { path: "config/underwriting", element: <DummyPage title="Underwriting" /> },
         { path: "config/general", element: <DummyPage title="General" /> },
         { path: "config/quick-links", element: <DummyPage title="Quick Links" /> },

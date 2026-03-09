@@ -4,7 +4,7 @@ import { FormSection } from './FormSection';
 import { Landmark, Hash } from 'lucide-react';
 
 export const validateBank = (form: any) => {
-  let errors: any = {};
+  const errors: any = {};
   const today = new Date();
 
   if (!form.AbaNumber) errors.AbaNumber = "ABA required";

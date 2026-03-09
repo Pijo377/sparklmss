@@ -3,7 +3,7 @@ import { Users } from 'lucide-react';
 import { FormSection } from './FormSection';
 
 export const validateReference = (form: any) => {
-  let errors: any = {};
+  const errors: any = {};
 
   // Reference #1 Mobile
   if (form.RefPhone1 && form.RefPhone1.replace(/\D/g, '').length < 10) {
