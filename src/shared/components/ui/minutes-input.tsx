@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useCallback, useId, useEffect } from 'react'
+import React, { useState, useCallback, useId } from 'react'
 import { ChevronUp, ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -31,15 +31,17 @@ export function MinutesInput({
 }: MinutesInputProps) {
     const [inputValue, setInputValue] = useState<string>(value.toString())
     const [isFocused, setIsFocused] = useState(false)
-    const generatedId = useId()
-    const inputId = id || generatedId
+    const [prevValue, setPrevValue] = useState(value)
 
-    // Sync internal state when external value changes
-    useEffect(() => {
+    if (value !== prevValue) {
+        setPrevValue(value)
         if (!isFocused) {
             setInputValue(value.toString())
         }
-    }, [value, isFocused])
+    }
+
+    const generatedId = useId()
+    const inputId = id || generatedId
 
     const clampValue = useCallback(
         (newValue: number) => Math.min(Math.max(newValue, min), max),

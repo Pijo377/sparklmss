@@ -13,6 +13,8 @@ import BlacklistManagement from "@/features/blacklist/pages/BlacklistManagement"
 import ACHFile from "@/features/achfile/page/achfile";
 import AchProvider from "@/features/achprovider/page/AchProvider";
 import AutoOrigination from "@/features/AutoOrigination/pages/AutoOrigination";
+import UnderwritingPage from "@/features/underwriting/page/underwriting";
+import BureauPage from "@/features/bureau/page/bureau";
 import DummyPage from "./pages/Dummy";
 
 export const dashboardRoutes: RouteObject = {
@@ -46,9 +48,9 @@ export const dashboardRoutes: RouteObject = {
         { path: "config/sms", element: <DummyPage title="SMS" /> },
         { path: "config/ach-file", element: <ACHFile /> },
         { path: "config/ach-provider", element: <AchProvider /> },
-        { path: "config/bureau", element: <DummyPage title="Bureau" /> },
+        { path: "config/bureau", element: <BureauPage /> },
         { path: "config/auto-origination", element: <AutoOrigination /> },
-        { path: "config/underwriting", element: <DummyPage title="Underwriting" /> },
+        { path: "config/underwriting", element: <UnderwritingPage /> },
         { path: "config/general", element: <DummyPage title="General" /> },
         { path: "config/quick-links", element: <DummyPage title="Quick Links" /> },
         { path: "reporting/overview", element: <DummyPage title="Reporting" /> },
