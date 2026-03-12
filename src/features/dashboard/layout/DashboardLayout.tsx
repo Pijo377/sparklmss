@@ -6,7 +6,6 @@ import { dashboardNavigationItems } from "../config/sidebar-config";
 export default function DashboardLayout() {
   const navigate = useNavigate();
   const location = useLocation();
-
   // Get sidebar state from AppLayout context
   const { isSidebarCollapsed, isSidebarOpen, setIsSidebarOpen, expandSidebar } =
     useSidebarContext();
@@ -19,7 +18,7 @@ export default function DashboardLayout() {
     }
   };
 
-  const handleClose = () => { 
+  const handleClose = () => {
     if (setIsSidebarOpen) {
       setIsSidebarOpen(false);
     }
@@ -50,7 +49,7 @@ export default function DashboardLayout() {
           onClose={handleClose}
           screen="dashboard"
           onExpand={expandSidebar}
-          navigationItems={dashboardNavigationItems} 
+          navigationItems={dashboardNavigationItems}
           hasSubMenus={true}
         />
       </div>

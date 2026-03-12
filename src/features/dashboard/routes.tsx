@@ -15,6 +15,7 @@ import AchProvider from "@/features/achprovider/page/AchProvider";
 import AutoOrigination from "@/features/AutoOrigination/pages/AutoOrigination";
 import UnderwritingPage from "@/features/underwriting/page/underwriting";
 import BureauPage from "@/features/bureau/page/bureau";
+import QuicklinksPage from "@/features/quicklinks/page/quicklinks";
 import DummyPage from "./pages/Dummy";
 
 export const dashboardRoutes: RouteObject = {
@@ -52,8 +53,8 @@ export const dashboardRoutes: RouteObject = {
         { path: "config/auto-origination", element: <AutoOrigination /> },
         { path: "config/underwriting", element: <UnderwritingPage /> },
         { path: "config/general", element: <DummyPage title="General" /> },
-        { path: "config/quick-links", element: <DummyPage title="Quick Links" /> },
+        { path: "config/quick-links", element: <QuicklinksPage /> },
         { path: "reporting/overview", element: <DummyPage title="Reporting" /> },
-        { path: "quick-link/main", element: <DummyPage title="Quick Link" /> },
+        { path: "quick-link/main", element: <QuicklinksPage /> },
     ],
 };
