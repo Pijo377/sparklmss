@@ -35,7 +35,7 @@ export default function QuicklinksPage() {
                     onClick={handleSubmit}
                     className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-md transition-colors bg-blue-600 hover:bg-blue-700 text-white"
                 >
-                    <span className="material-symbols-outlined text-sm">save</span>
+                    <span className="text-sm">save</span>
                     Submit
                 </button>
             </div>

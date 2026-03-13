@@ -16,6 +16,8 @@ import AutoOrigination from "@/features/AutoOrigination/pages/AutoOrigination";
 import UnderwritingPage from "@/features/underwriting/page/underwriting";
 import BureauPage from "@/features/bureau/page/bureau";
 import QuicklinksPage from "@/features/quicklinks/page/quicklinks";
+import ManageUserProfile from "@/features/ManageUserProfile/page/ManageUserProfile";
+import ManageUserMenu from "@/features/ManageUserMenu/page/ManageUserMenu";
 import DummyPage from "./pages/Dummy";
 
 export const dashboardRoutes: RouteObject = {
@@ -41,8 +43,8 @@ export const dashboardRoutes: RouteObject = {
         { path: "transaction/debits", element: <DummyPage title="Pending Debits" /> },
         { path: "transaction/create-ach", element: <DummyPage title="Create ACH File" /> },
         { path: "transaction/return-file", element: <DummyPage title="Return File Processing" /> },
-        { path: "profile/user-profile", element: <DummyPage title="Manage User Profile" /> },
-        { path: "profile/user-menu", element: <DummyPage title="Manage User Menu" /> },
+        { path: "profile/user-profile", element: <ManageUserProfile /> },
+        { path: "profile/user-menu", element: <ManageUserMenu /> },
         { path: "profile/password", element: <DummyPage title="Change Password" /> },
         { path: "config/documents", element: <DummyPage title="Documents" /> },
         { path: "config/email", element: <DummyPage title="Email" /> },
