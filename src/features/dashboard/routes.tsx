@@ -18,6 +18,7 @@ import BureauPage from "@/features/bureau/page/bureau";
 import QuicklinksPage from "@/features/quicklinks/page/quicklinks";
 import ManageUserProfile from "@/features/ManageUserProfile/page/ManageUserProfile";
 import ManageUserMenu from "@/features/ManageUserMenu/page/ManageUserMenu";
+import General from "@/features/general/pages/general";
 import DummyPage from "./pages/Dummy";
 
 export const dashboardRoutes: RouteObject = {
@@ -54,7 +55,7 @@ export const dashboardRoutes: RouteObject = {
         { path: "config/bureau", element: <BureauPage /> },
         { path: "config/auto-origination", element: <AutoOrigination /> },
         { path: "config/underwriting", element: <UnderwritingPage /> },
-        { path: "config/general", element: <DummyPage title="General" /> },
+        { path: "config/general", element: <General /> },
         { path: "config/quick-links", element: <QuicklinksPage /> },
         { path: "reporting/overview", element: <DummyPage title="Reporting" /> },
         { path: "quick-link/main", element: <QuicklinksPage /> },

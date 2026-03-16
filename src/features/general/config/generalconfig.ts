@@ -1,0 +1,111 @@
+import {
+    LayoutGrid, UserCog, Flag, Tag, NotebookTabs, FileText,
+    Settings2, LayoutDashboard, Calculator, Database, Banknote,
+    CheckCircle, Clock, ThumbsUp, RotateCcw, PieChart, Users,
+    Activity, BarChart3, Megaphone, ListTodo, Wallet, UserCheck,
+    Camera, LineChart
+} from "lucide-react";
+
+export interface QueueItem {
+    id: string;
+    label: string;
+    icon?: any;
+}
+
+export interface GeneralTab {
+    id: string;
+    label: string;
+    icon: any;
+}
+
+export const GENERAL_TABS: GeneralTab[] = [
+    { id: "queue-config", label: "Queue config", icon: LayoutGrid },
+    { id: "collection-agent-queue", label: "Collection Agent Queue", icon: UserCog },
+    { id: "flags", label: "Flags", icon: Flag },
+    { id: "tags", label: "Tags", icon: Tag },
+    { id: "notes-topic", label: "Notes Topic", icon: NotebookTabs },
+    { id: "document-type", label: "Document Type", icon: FileText },
+    { id: "general-config", label: "General Config", icon: Settings2 },
+    { id: "dashboard-menus-config", label: "Dashboard Menu Config", icon: LayoutDashboard },
+    { id: "cash-register", label: "Cash Register", icon: Calculator },
+];
+
+export const INITIAL_QUEUES = {
+    active: [
+        { id: "bankruptcy", label: "Bankruptcy", icon: Database },
+        { id: "funded", label: "Funded", icon: Banknote },
+        { id: "paying-as-agreed", label: "Paying as Agreed", icon: CheckCircle },
+        { id: "due-today", label: "Due Today", icon: Clock },
+        { id: "paid-off", label: "Paid Off", icon: ThumbsUp },
+        { id: "originated", label: "Originated", icon: CheckCircle },
+        { id: "pending-review", label: "Pending Review", icon: Clock },
+        { id: "ready-to-fund", label: "Ready to Fund", icon: Banknote },
+    ],
+    inactive: [
+        { id: "past-due-1-30", label: "Past Due(1 to 30 days)", icon: Banknote },
+        { id: "past-due-31-90", label: "Past Due(31 to 90 days)", icon: Banknote },
+        { id: "past-due-91-150", label: "Past Due(91 to 150 days)", icon: Banknote },
+        { id: "past-due-above-150", label: "Past Due(above 150 days)", icon: Banknote },
+        { id: "archived-leads", label: "Archived Leads", icon: Database },
+        { id: "incomplete-docs", label: "Incomplete Documents", icon: FileText },
+    ]
+};
+
+export const COLLECTION_AGENT_QUEUES = {
+    active: [
+        { id: "charge-off-arrangement", label: "Charge Off Arrangement", icon: ThumbsUp },
+        { id: "returns-report", label: "Returns Report", icon: RotateCcw },
+        { id: "payments-cleared-report", label: "Payments Cleared Report", icon: Banknote },
+        { id: "pdc-report", label: "PDC Report", icon: FileText },
+        { id: "reports", label: "Reports", icon: PieChart },
+    ],
+    inactive: [
+        { id: "charge-off", label: "Charge Off", icon: Users },
+    ]
+};
+
+export const DASHBOARD_MENUS = {
+    active: [
+        { id: "daily-vitals", label: "Daily Vitals", icon: Activity },
+        { id: "product-activity", label: "Product Activity", icon: BarChart3 },
+        { id: "campaign-activity", label: "Campaign Activity", icon: Megaphone },
+        { id: "call-queue-dashboard", label: "Call Queue Dashboard", icon: ListTodo },
+        { id: "collection-dashboard", label: "Collection Dashboard", icon: Wallet },
+        { id: "user-login-activity", label: "User Login Activity", icon: UserCheck },
+        { id: "portfolio-snapshot", label: "Portfolio Snapshot", icon: Camera },
+        { id: "projections", label: "Projections", icon: LineChart },
+    ],
+    inactive: []
+};
+
+export interface NoteTopic {
+    id: number;
+    topic: string;
+}
+
+export interface TagItem {
+    id: number;
+    tag: string;
+}
+
+export const INITIAL_NOTES_TOPICS: NoteTopic[] = [
+    { id: 1, topic: "General" },
+    { id: 2, topic: "Payment" },
+    { id: 3, topic: "Extensions" },
+    { id: 4, topic: "Complaint" },
+    { id: 5, topic: "Collection" },
+    { id: 6, topic: "Bank Verification" },
+    { id: 7, topic: "General Verification" },
+    { id: 8, topic: "Returns" },
+    { id: 9, topic: "Dev" },
+];
+
+export const INITIAL_TAGS: TagItem[] = [
+    { id: 1, tag: "BankVerification" },
+    { id: 2, tag: "Frau" },
+    { id: 3, tag: "Recovery" },
+    { id: 4, tag: "Returns" },
+    { id: 5, tag: "Priority" },
+    { id: 6, tag: "Follow-up" },
+    { id: 7, tag: "Store9" },
+];
