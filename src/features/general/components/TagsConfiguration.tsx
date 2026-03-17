@@ -7,6 +7,7 @@ import { INITIAL_TAGS, type TagItem } from "../config/generalconfig";
 
 const TagsConfiguration = () => {
     const [data, setData] = useState<TagItem[]>(INITIAL_TAGS);
+    const [isAdding, setIsAdding] = useState(false);
     const [newTag, setNewTag] = useState("");
     const [editingTag, setEditingTag] = useState<TagItem | null>(null);
     const [editTagValue, setEditTagValue] = useState(""); // Dedicated state for editing
@@ -34,6 +35,7 @@ const TagsConfiguration = () => {
         setEditingTag(tag);
         setEditTagValue(tag.tag); // Use the dedicated edit state
         setError(null);
+        setIsAdding(false);
     }, []);
 
     const handleCancelEdit = useCallback(() => {
@@ -57,20 +59,31 @@ const TagsConfiguration = () => {
                 return;
             }
             const newId = Math.max(...data.map((d) => d.id), 0) + 1;
-            setData((prev) => [...prev, { id: newId, tag: newTag.trim() }]);
+            setData((prev) => [{ id: newId, tag: newTag.trim() }, ...prev]);
             setNewTag("");
             setError(null);
+            setIsAdding(false);
         }
     }, [newTag, editTagValue, data, editingTag, handleCancelEdit]);
 
-    const handleCancel = useCallback(() => {
-        if (editingTag) {
-            handleCancelEdit();
-        } else {
+    const handleToggleAdd = useCallback(() => {
+        if (isAdding) {
+            setIsAdding(false);
             setNewTag("");
             setError(null);
+        } else {
+            setIsAdding(true);
+            setEditingTag(null);
         }
-    }, [editingTag, handleCancelEdit]);
+    }, [isAdding]);
+
+    const tableData = useMemo(() => {
+        const sortedData = [...data].reverse();
+        if (isAdding) {
+            return [{ id: -1, tag: "" }, ...sortedData];
+        }
+        return sortedData;
+    }, [data, isAdding]);
 
     const columns: DisplayTableColumn<TagItem>[] = useMemo(
         () => [
@@ -78,27 +91,44 @@ const TagsConfiguration = () => {
                 header: "#",
                 className: "w-12 text-center text-slate-500",
                 headerClassName: "w-12 text-center",
-                render: (_row: TagItem, rowIndex: number) => rowIndex + 1,
+                render: (_row: TagItem, rowIndex: number) => {
+                    if (_row.id === -1) return <span className="text-blue-600 font-bold">*</span>;
+                    return rowIndex + (isAdding ? 0 : 1);
+                },
             },
             {
                 header: "Tags",
                 accessorKey: "tag",
                 className: "font-medium text-slate-700 p-0",
                 render: (row: TagItem) => {
+                    const isNew = row.id === -1;
                     const isEditing = editingTag?.id === row.id;
-                    if (isEditing) {
+
+                    if (isNew || isEditing) {
                         return (
-                            <div className="px-4 py-1.5 h-full flex items-center bg-blue-50/50">
+                            <div className="px-4 py-1.5 h-full flex flex-col justify-center bg-blue-50/50">
                                 <input
                                     autoFocus
-                                    className="w-full bg-white border border-blue-400 rounded px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500 shadow-sm transition-all"
-                                    value={editTagValue}
-                                    onChange={(e) => setEditTagValue(e.target.value)}
+                                    className={`w-full bg-white border ${error && (isNew || isEditing) ? "border-red-400" : "border-blue-400"
+                                        } rounded px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500 shadow-sm transition-all`}
+                                    value={isNew ? newTag : editTagValue}
+                                    onChange={(e) => {
+                                        if (isNew) setNewTag(e.target.value);
+                                        else setEditTagValue(e.target.value);
+                                        setError(null);
+                                    }}
                                     onKeyDown={(e) => {
                                         if (e.key === "Enter") handleAdd();
-                                        if (e.key === "Escape") handleCancelEdit();
+                                        if (e.key === "Escape") {
+                                            if (isNew) handleToggleAdd();
+                                            else handleCancelEdit();
+                                        }
                                     }}
+                                    placeholder="Enter Tag"
                                 />
+                                {error && (isNew || isEditing) && (
+                                    <span className="text-[10px] text-red-500 mt-0.5">{error}</span>
+                                )}
                             </div>
                         );
                     }
@@ -109,62 +139,77 @@ const TagsConfiguration = () => {
                 header: "Actions",
                 headerClassName: "text-center w-24",
                 className: "text-center w-24",
-                render: (row: TagItem) => (
-                    <Popover>
-                        <PopoverTrigger asChild>
-                            <button
-                                className="p-1 text-slate-400 hover:text-blue-600 rounded transition-colors group"
-                                title="Settings"
+                render: (row: TagItem) => {
+                    const isNew = row.id === -1;
+                    const isEditing = editingTag?.id === row.id;
+
+                    return (
+                        <Popover>
+                            <PopoverTrigger asChild>
+                                <button
+                                    className="p-1 text-slate-400 hover:text-blue-600 rounded transition-colors group"
+                                    title="Settings"
+                                >
+                                    <Settings size={16} className="text-blue-600 cursor-pointer" />
+                                </button>
+                            </PopoverTrigger>
+                            <PopoverContent
+                                side="bottom"
+                                align="end"
+                                sideOffset={8}
+                                className="w-auto p-2 bg-white/80 backdrop-blur-xl border border-indigo-200/50 rounded-xl flex items-center gap-1.5 shadow-[0_20px_50px_rgba(79,70,229,0.15)] z-50 animate-in fade-in-0 mt-1 zoom-in-95 duration-200 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95"
                             >
-                                <Settings size={16} className="text-blue-600 cursor-pointer" />
-                            </button>
-                        </PopoverTrigger>
-                        <PopoverContent
-                            side="bottom"
-                            align="end"
-                            sideOffset={8}
-                            className="w-auto p-1.5 bg-white border border-blue-500 rounded-[10px] flex items-center gap-1 shadow-lg z-50 animate-in fade-in zoom-in-95"
-                        >
-                            {editingTag?.id === row.id ? (
+                                {isNew || isEditing ? (
+                                    <PopoverPrimitive.Close asChild>
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleAdd();
+                                            }}
+                                            className="flex items-center gap-1.5 px-3.5 py-2 bg-gradient-to-tr from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 active:scale-95 text-white rounded-lg transition-all duration-150 text-xs font-semibold tracking-wide cursor-pointer shadow-[inset_0_1px_0_0_rgba(255,255,255,0.1)]"
+                                        >
+                                            <Save size={13} strokeWidth={2.5} /> {isEditing ? "Update" : "Add"}
+                                        </button>
+                                    </PopoverPrimitive.Close>
+                                ) : (
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleEdit(row);
+                                        }}
+                                        className="flex items-center gap-1.5 px-3.5 py-2 bg-gradient-to-tr from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 active:scale-95 text-white rounded-lg transition-all duration-150 text-xs font-semibold tracking-wide cursor-pointer shadow-[inset_0_1px_0_0_rgba(255,255,255,0.1)]"
+                                    >
+                                        <Edit2 size={13} strokeWidth={2.5} /> Edit
+                                    </button>
+                                )}
+                                <div className="w-px h-4 bg-indigo-100/30 mx-0.5" />
                                 <PopoverPrimitive.Close asChild>
                                     <button
                                         onClick={(e) => {
                                             e.stopPropagation();
-                                            handleAdd(); // Save current edit
+                                            if (isNew) {
+                                                handleToggleAdd();
+                                            } else if (isEditing) {
+                                                handleCancelEdit();
+                                            } else {
+                                                handleDelete(row.id);
+                                            }
                                         }}
-                                        className="flex items-center gap-2 px-3 py-2 text-blue-600 hover:bg-blue-50 rounded-md transition-colors text-sm font-medium cursor-pointer"
+                                        className={`flex items-center gap-1.5 px-3.5 py-2 active:scale-95 rounded-lg transition-all duration-150 text-xs font-semibold tracking-wide cursor-pointer ${isNew || isEditing
+                                                ? "text-slate-400 hover:bg-indigo-50/50 hover:text-indigo-600"
+                                                : "text-red-400 hover:bg-red-50 hover:text-red-500"
+                                            }`}
                                     >
-                                        <Save size={16} /> Update
+                                        {isNew || isEditing ? "Cancel" : <><Trash2 size={13} strokeWidth={2.5} /> Delete</>}
                                     </button>
                                 </PopoverPrimitive.Close>
-                            ) : (
-                                <button
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        handleEdit(row);
-                                    }}
-                                    className="flex items-center gap-2 px-3 py-2 text-blue-600 hover:bg-blue-50 rounded-md transition-colors text-sm font-medium cursor-pointer"
-                                >
-                                    <Edit2 size={16} /> Edit
-                                </button>
-                            )}
-                            <PopoverPrimitive.Close asChild>
-                                <button
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        handleDelete(row.id);
-                                    }}
-                                    className="flex items-center gap-2 px-3 py-2 text-red-600 hover:bg-red-50 rounded-md transition-colors text-sm font-medium cursor-pointer"
-                                >
-                                    <Trash2 size={16} /> Delete
-                                </button>
-                            </PopoverPrimitive.Close>
-                        </PopoverContent>
-                    </Popover>
-                ),
+                            </PopoverContent>
+                        </Popover>
+                    );
+                },
             },
         ],
-        [handleDelete, handleEdit, editingTag, editTagValue, handleAdd, handleCancelEdit]
+        [handleDelete, handleEdit, editingTag, editTagValue, handleAdd, handleCancelEdit, isAdding, newTag, handleToggleAdd, error]
     );
 
     return (
@@ -173,7 +218,7 @@ const TagsConfiguration = () => {
             <div className="flex-1 min-w-0 flex flex-col">
                 <DisplayTable<TagItem>
                     className="h-full"
-                    data={[...data].reverse()}
+                    data={tableData}
                     columns={columns}
                     title="Tags"
                     enableGlobalSearch
@@ -182,61 +227,22 @@ const TagsConfiguration = () => {
                     initialPageSize={10}
                     pageSizeOptions={[10, 25, 50, 100]}
                     emptyMessage="No tags found."
+                    toolbarButtons={[
+                        {
+                            label: isAdding ? "Cancel" : "Add",
+                            icon: <PlusCircle size={14} />,
+                            onClick: handleToggleAdd,
+                            className: isAdding
+                                ? "bg-red-600 border-red-600 text-white hover:bg-red-700"
+                                : "bg-green-600 border-green-600 text-white hover:bg-green-700"
+                        }
+                    ]}
                 />
             </div>
 
-            {/* ── Right Panel: Add/Update & Configure ── */}
+            {/* ── Right Panel: Configure ── */}
             <div className="w-72 xl:w-80 overflow-y-auto custom-scrollbar flex flex-col shrink-0 rounded-lg border bg-card shadow-sm h-full bg-white">
-                {/* Section 1: Add/Update Entry */}
-                <section className="p-4 pt-[13px] space-y-4">
-                    <h2 className="text-[11px] font-bold text-muted-foreground flex items-center gap-2 uppercase tracking-widest">
-                        <PlusCircle size={14} className="text-primary" />
-                        Add Entry
-                    </h2>
-                    <div className="space-y-3">
-                        <div>
-                            <label className="block text-[10px] font-semibold text-slate-500 mb-1 uppercase tracking-wider">
-                                Enter Tags
-                            </label>
-                            <input
-                                className={`w-full px-3 py-2 bg-slate-50 border rounded-lg text-xs focus:outline-none focus:ring-1 ${error
-                                    ? "border-red-400 focus:ring-red-400"
-                                    : "border-slate-200 focus:ring-primary"
-                                    }`}
-                                placeholder="Enter Tag"
-                                type="text"
-                                value={newTag}
-                                onChange={(e) => {
-                                    setNewTag(e.target.value);
-                                    setError(null);
-                                }}
-                                onKeyDown={(e) => e.key === "Enter" && handleAdd()}
-                            />
-                            {error && (
-                                <p className="text-[10px] text-red-500 mt-1 font-medium">{error}</p>
-                            )}
-                        </div>
-
-                        <div className="flex gap-2 pt-1">
-                            <button
-                                onClick={handleAdd}
-                                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-[11px] font-bold py-2 rounded-lg transition-all shadow-sm flex items-center justify-center gap-2 uppercase tracking-wider"
-                            >
-                                Add
-                            </button>
-                            <button
-                                onClick={handleCancel}
-                                className="flex-1 border border-slate-200 hover:bg-slate-50 text-slate-500 text-[11px] font-bold py-2 rounded-lg transition-all flex items-center justify-center gap-2 uppercase tracking-wider font-bold"
-                            >
-                                Cancel
-                            </button>
-                        </div>
-                    </div>
-                </section>
-
-                <div className="h-[1px] bg-slate-100 mx-4" />
-
-                {/* Section 2: Configure Tags */}
+                {/* Section: Configure Tags */}
                 <section className="p-4 pt-[13px] space-y-4">
                     <h2 className="text-[11px] font-bold text-muted-foreground flex items-center gap-2 uppercase tracking-widest">
                         <Settings size={14} className="text-primary" />
