@@ -74,6 +74,9 @@ export interface ModalFooterActionsProps {
 
   /** Additional className */
   className?: string;
+
+  /** Additional className for primary button */
+  primaryClassName?: string;
 }
 
 // ============================================================================
@@ -103,8 +106,8 @@ export interface ConfirmModalProps {
   /** Cancel callback */
   onCancel?: () => void;
 
-  /** Variant for styling */
-  variant?: "default" | "danger";
+  /** Variant for styling - determines icon and color scheme */
+  variant?: "default" | "danger" | "warning" | "success" | "info";
 
   /** Loading state */
   loading?: boolean;
@@ -123,4 +126,22 @@ export interface UseModalReturn {
   close: () => void;
   toggle: () => void;
   setOpen: (open: boolean) => void;
+}
+
+
+// ============================================================================
+// IFRAME MODAL TYPES
+// ============================================================================
+
+export interface IframeModalProps {
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  title?: string;
+  iframeUrl: string;
+  onLoad?: () => void;
+  onError?: () => void;
+  maxWidth?: string;
+  maxHeight?: string;
+  showCloseButton?: boolean;
+  preventCloseWhileLoading?: boolean;
 }

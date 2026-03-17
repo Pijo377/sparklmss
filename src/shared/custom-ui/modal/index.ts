@@ -7,7 +7,7 @@ export { Modal } from "./components/Modal";
 
 // Pre-built variants
 export { ConfirmModal } from "./components/ConfirmModal";
-
+export { IframeModal } from "./components/IframeModal";
 // Footer helpers
 export { ModalFooterActions } from "./components/ModalFooterActions";
 
@@ -22,6 +22,7 @@ export type {
   ModalProps,
   ModalFooterActionsProps,
   ConfirmModalProps,
+  IframeModalProps,
   UseModalReturn,
 } from "./types";
 

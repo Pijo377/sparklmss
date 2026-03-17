@@ -7,9 +7,7 @@ interface LoadingSpinnerProps {
 /**
  * Loading spinner for buttons
  */
-export function LoadingSpinner({
-  className = "mr-2 h-4 w-4",
-}: LoadingSpinnerProps) {
+export function LoadingSpinner({ className = "mr-2 h-4 w-4" }: LoadingSpinnerProps) {
   // 3️⃣ JSX RETURN
   return (
     <svg
