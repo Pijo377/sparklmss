@@ -9,7 +9,7 @@ import { LoadingSpinner } from "./LoadingSpinner";
 // 2️⃣ COMPONENT DECLARATION
 /**
  * Pre-built footer actions for Modal
- *
+ * 
  * Standard confirm/cancel pattern with loading state support
  */
 export function ModalFooterActions({
@@ -21,6 +21,7 @@ export function ModalFooterActions({
   onSecondary,
   secondaryDisabled = false,
   className,
+  primaryClassName,
 }: ModalFooterActionsProps) {
   // 3️⃣ JSX RETURN
   return (
@@ -34,7 +35,7 @@ export function ModalFooterActions({
             "px-4 py-2 text-sm font-medium rounded-lg transition-colors",
             "text-gray-700 bg-white border border-gray-300",
             "hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200",
-            "disabled:opacity-50 disabled:cursor-not-allowed",
+            "disabled:opacity-50 disabled:cursor-not-allowed"
           )}
         >
           {secondaryText}
@@ -50,6 +51,7 @@ export function ModalFooterActions({
           "text-white bg-blue-600",
           "hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2",
           "disabled:opacity-50 disabled:cursor-not-allowed",
+          primaryClassName
         )}
       >
         {primaryLoading && <LoadingSpinner className="mr-2 h-4 w-4" />}

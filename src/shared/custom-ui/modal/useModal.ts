@@ -3,11 +3,11 @@ import type { UseModalReturn } from "./types";
 
 /**
  * Hook for managing modal state
- *
+ * 
  * @example
  * ```tsx
  * const modal = useModal();
- *
+ * 
  * return (
  *   <>
  *     <button onClick={modal.open}>Open Modal</button>
