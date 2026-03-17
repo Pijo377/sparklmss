@@ -102,6 +102,7 @@ const RoleMenuConfiguration = ({
                                         onClick={(e) => {
                                             e.stopPropagation();
                                             toggleMenu(item.id);
+                                            setSelectedMainMenuId(item.id);
                                         }}
                                         className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer items-center justify-center rounded-full transition-colors duration-200 ease-in-out focus:outline-none ${isActive ? 'bg-blue-600' : 'bg-slate-200'
                                             }`}
@@ -127,7 +128,7 @@ const RoleMenuConfiguration = ({
                 <div className="bg-white rounded-xl border border-slate-200 shadow-sm flex flex-col h-full overflow-hidden">
                     <div className="p-4 border-b border-blue-500 flex items-center justify-center bg-blue-600">
                         <h2 className="text-sm font-semibold text-white">
-                            {selectedMainMenuId ? `Sub: ${selectedItem?.label}` : "Sub Menu"}
+                            Sub Menu
                         </h2>
                     </div>
 

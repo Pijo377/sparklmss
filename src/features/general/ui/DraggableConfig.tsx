@@ -51,14 +51,14 @@ const SortableItem = ({ id, item, type }: SortableItemProps) => {
             ref={setNodeRef}
             style={style}
             className={`
-                group flex items-center gap-3 p-2.5 rounded-lg border transition-all duration-200 
+                group flex items-center gap-3 p-3 rounded-[20px] border transition-all duration-200 
                 ${isDragging
                     ? 'border-blue-500 bg-blue-50 shadow-lg'
                     : type === 'active'
                         ? 'border-[#7cb342]/30 bg-white shadow-sm hover:border-[#7cb342]'
                         : 'border-[#e57373]/30 bg-white shadow-sm hover:border-[#e57373]'
                 }
-`}
+            `}
         >
             <button
                 {...attributes}
@@ -69,23 +69,27 @@ const SortableItem = ({ id, item, type }: SortableItemProps) => {
                 <GripVertical size={16} />
             </button>
 
-            <div className={`shrink-0 ml-1 ${type === 'active' ? 'text-green-600' : 'text-red-500'}`}>
+            <div className={`p-2.5 rounded-2xl transition-colors shrink-0 ${
+                type === 'active' 
+                    ? 'bg-green-50 text-green-600' 
+                    : 'bg-red-50 text-red-500'
+            }`}>
                 {Icon && <Icon size={16} />}
             </div>
 
-            <div className="flex-1 min-w-0">
-                <span className="text-sm font-medium text-slate-900 truncate block">
+            <div className="flex-1 min-w-0 flex flex-col justify-center">
+                <span className="text-sm font-medium text-slate-900 leading-tight block">
                     {item.label}
                 </span>
             </div>
 
             <div className="flex items-center gap-2 shrink-0 pr-1">
-                <button className="p-1 text-slate-400 hover:text-blue-600 transition-colors">
-                    <Info size={16} />
+                <button className="p-1 px-1.5 text-slate-300 hover:text-blue-500 transition-colors">
+                    <Info size={18} strokeWidth={1.5} />
                 </button>
-                <div className="w-px h-3 bg-slate-200" />
-                <button className="p-1 text-slate-400 hover:text-blue-600 transition-colors">
-                    <Pencil size={16} />
+                <div className="w-px h-3.5 bg-slate-200 mx-0.5" />
+                <button className="p-1 px-1.5 text-slate-300 hover:text-blue-500 transition-colors">
+                    <Pencil size={18} strokeWidth={1.5} />
                 </button>
             </div>
         </div>
@@ -106,8 +110,14 @@ const Column = ({ title, items, type }: ColumnProps) => {
 
     return (
         <div className="flex flex-col bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden h-[420px]">
-            <div className="p-4 bg-blue-600 flex items-center justify-center relative shrink-0">
-                <h3 className="text-sm font-semibold text-white">{title}</h3>
+            <div className={`p-3.5 flex items-center justify-start px-5 relative shrink-0 ${type === 'active' ? 'bg-green-600' : 'bg-red-600'
+                }`}>
+                <h3 className="text-sm font-semibold text-white flex items-center gap-2">
+                    {title}
+                    <span className="inline-flex items-center justify-center bg-white/20 text-white min-w-5 h-5 px-1 rounded-full text-[10px] font-bold">
+                        {items.length}
+                    </span>
+                </h3>
             </div>
             <div
                 ref={setNodeRef}
@@ -251,7 +261,7 @@ const DraggableConfig = ({ title, subtitle, initialData, onSave }: DraggableConf
                 <div className="flex items-center gap-2 ml-auto">
                     <button
                         onClick={() => onSave?.(queues)}
-                        className="inline-flex items-center justify-center px-6 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-green-700 rounded-md transition-colors shadow-sm"
+                        className="inline-flex items-center justify-center px-6 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-all shadow-sm"
                     >
                         Submit
                     </button>
@@ -286,10 +296,13 @@ const DraggableConfig = ({ title, subtitle, initialData, onSave }: DraggableConf
                             <GripVertical size={16} className="text-slate-400" />
                             <div className="flex items-center gap-2 flex-1">
                                 {activeItem.icon && (
-                                    <activeItem.icon
-                                        size={16}
-                                        className={queues.active.some(i => i.id === activeId) ? "text-green-600" : "text-red-500"}
-                                    />
+                                    <div className={`p-2 rounded-lg ${
+                                        queues.active.some(i => i.id === activeId) 
+                                            ? "bg-green-50 text-green-600" 
+                                            : "bg-red-50 text-red-500"
+                                    }`}>
+                                        <activeItem.icon size={16} />
+                                    </div>
                                 )}
                                 <span className="text-sm font-semibold text-slate-800">{activeItem.label}</span>
                             </div>

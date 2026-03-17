@@ -201,8 +201,8 @@ const NotesTopicConfiguration = () => {
     );
 
     return (
-        <div className="flex gap-4 items-stretch h-full overflow-hidden">
-            <div className="flex-1 min-w-0 flex flex-col">
+        <div className="flex flex-col lg:flex-row gap-4 items-stretch h-full overflow-hidden">
+            <div className="flex-1 min-w-0 flex flex-col min-h-[400px] lg:min-h-0">
                 <DisplayTable<NoteTopic>
                     className="h-full"
                     data={tableData}

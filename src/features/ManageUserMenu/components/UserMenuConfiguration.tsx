@@ -1,5 +1,6 @@
+import { useState } from "react";
 import { USERS, MENU_ITEMS } from "../config/manageusermenuconfig";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Search } from "lucide-react";
 
 interface UserMenuConfigurationProps {
     selectedUser: string;
@@ -26,6 +27,12 @@ const UserMenuConfiguration = ({
     selectedItem,
     isSubMenuEmpty
 }: UserMenuConfigurationProps) => {
+    const [searchTerm, setSearchTerm] = useState("");
+
+    const filteredUsers = USERS.filter((user) =>
+        user.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
     return (
         <div className="grid grid-cols-1 lg:grid-cols-24 gap-6">
             {/* Selection Column (Users) */}
@@ -34,25 +41,44 @@ const UserMenuConfiguration = ({
                     <div className="p-4 border-b border-slate-100 flex items-center justify-center">
                         <h2 className="text-sm font-semibold text-slate-900">Users</h2>
                     </div>
+                    {/* Search Box */}
+                    <div className="p-2 border-b border-slate-50 bg-slate-50/30">
+                        <div className="relative group">
+                            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400 group-focus-within:text-blue-500 transition-colors" />
+                            <input
+                                type="text"
+                                placeholder="Search users..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="w-full pl-8 pr-3 py-1.5 text-xs bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all placeholder:text-slate-400"
+                            />
+                        </div>
+                    </div>
                     <div className="p-2 space-y-1 h-[calc(100vh-320px)] overflow-y-auto scrollbar-hide">
-                        {USERS.map((user) => (
-                            <button
-                                key={user.id}
-                                onClick={() => {
-                                    setSelectedUser(user.id);
-                                    setSelectedMainMenuId(null);
-                                }}
-                                className={`w-full flex items-center px-3 py-2.5 text-sm rounded-lg transition-all duration-200 ${selectedUser === user.id
-                                    ? 'bg-blue-50 text-slate-900 font-medium'
-                                    : 'text-slate-600 hover:bg-slate-50'
-                                    }`}
-                            >
-                                <span>{user.name}</span>
-                                {selectedUser === user.id && (
-                                    <div className="ml-auto w-1.5 h-1.5 rounded-full bg-blue-600" />
-                                )}
-                            </button>
-                        ))}
+                        {filteredUsers.length > 0 ? (
+                            filteredUsers.map((user) => (
+                                <button
+                                    key={user.id}
+                                    onClick={() => {
+                                        setSelectedUser(user.id);
+                                        setSelectedMainMenuId(null);
+                                    }}
+                                    className={`w-full flex items-center px-3 py-2.5 text-sm rounded-lg transition-all duration-200 ${selectedUser === user.id
+                                        ? 'bg-blue-50 text-slate-900 font-medium'
+                                        : 'text-slate-600 hover:bg-slate-50'
+                                        }`}
+                                >
+                                    <span>{user.name}</span>
+                                    {selectedUser === user.id && (
+                                        <div className="ml-auto w-1.5 h-1.5 rounded-full bg-blue-600" />
+                                    )}
+                                </button>
+                            ))
+                        ) : (
+                            <div className="py-8 text-center">
+                                <p className="text-xs text-slate-400 italic">No users found</p>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
@@ -102,6 +128,7 @@ const UserMenuConfiguration = ({
                                         onClick={(e) => {
                                             e.stopPropagation();
                                             toggleMenu(item.id);
+                                            setSelectedMainMenuId(item.id);
                                         }}
                                         className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer items-center justify-center rounded-full transition-colors duration-200 ease-in-out focus:outline-none ${isActive ? 'bg-blue-600' : 'bg-slate-200'
                                             }`}
@@ -127,7 +154,7 @@ const UserMenuConfiguration = ({
                 <div className="bg-white rounded-xl border border-slate-200 shadow-sm flex flex-col h-full overflow-hidden">
                     <div className="p-4 border-b border-blue-500 flex items-center justify-center bg-blue-600">
                         <h2 className="text-sm font-semibold text-white">
-                            {selectedMainMenuId ? `Sub: ${selectedItem?.label}` : "Sub Menu"}
+                            Sub Menu
                         </h2>
                     </div>
 

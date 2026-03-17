@@ -213,9 +213,9 @@ const TagsConfiguration = () => {
     );
 
     return (
-        <div className="flex gap-4 items-stretch h-full overflow-hidden">
+        <div className="flex flex-col lg:flex-row gap-4 items-stretch h-full overflow-hidden">
             {/* ── Left: Table ── */}
-            <div className="flex-1 min-w-0 flex flex-col">
+            <div className="flex-1 min-w-0 flex flex-col min-h-[400px] lg:min-h-0">
                 <DisplayTable<TagItem>
                     className="h-full"
                     data={tableData}
@@ -241,7 +241,7 @@ const TagsConfiguration = () => {
             </div>
 
             {/* ── Right Panel: Configure ── */}
-            <div className="w-72 xl:w-80 overflow-y-auto custom-scrollbar flex flex-col shrink-0 rounded-lg border bg-card shadow-sm h-full bg-white">
+            <div className="w-full lg:w-72 xl:w-80 overflow-y-auto custom-scrollbar flex flex-col shrink-0 rounded-lg border bg-card shadow-sm h-full bg-white">
                 {/* Section: Configure Tags */}
                 <section className="p-4 pt-[13px] space-y-4">
                     <h2 className="text-[11px] font-bold text-muted-foreground flex items-center gap-2 uppercase tracking-widest">
@@ -254,32 +254,32 @@ const TagsConfiguration = () => {
                             {/* Loan Toggle */}
                             <div
                                 onClick={() => { setLoanChecked(!loanChecked); setConfigError(null); }}
-                                className="flex items-center gap-3 px-2 py-1 bg-slate-50 border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50 transition-colors select-none"
+                                className="flex items-center gap-3 px-2 py-1 bg-indigo-600 border border-indigo-700 rounded-lg cursor-pointer hover:bg-indigo-700 transition-colors select-none"
                             >
                                 <div className={`
                                     w-4 h-4 rounded-[4px] border transition-all flex items-center justify-center shrink-0
-                                    ${loanChecked ? 'bg-blue-600 border-blue-600 shadow-sm' : 'bg-white border-slate-300'}
+                                    ${loanChecked ? 'bg-white border-white shadow-sm' : 'bg-transparent border-indigo-400'}
                                 `}>
-                                    {loanChecked && <Check size={14} className="text-white stroke-[3.5]" />}
+                                    {loanChecked && <Check size={14} className="text-indigo-600 stroke-[3.5]" />}
                                 </div>
                                 <div className="flex-1">
-                                    <span className="text-xs font-medium text-slate-900">Loan</span>
+                                    <span className="text-xs font-medium text-white">Loan</span>
                                 </div>
                             </div>
 
                             {/* Customer Toggle */}
                             <div
                                 onClick={() => { setCustomerChecked(!customerChecked); setConfigError(null); }}
-                                className="flex items-center gap-3 px-2 py-1 bg-slate-50 border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50 transition-colors select-none"
+                                className="flex items-center gap-3 px-2 py-1 bg-orange-600 border border-orange-700 rounded-lg cursor-pointer hover:bg-orange-700 transition-colors select-none"
                             >
                                 <div className={`
                                     w-4 h-4 rounded-[4px] border transition-all flex items-center justify-center shrink-0
-                                    ${customerChecked ? 'bg-blue-600 border-blue-600 shadow-sm' : 'bg-white border-slate-300'}
+                                    ${customerChecked ? 'bg-white border-white shadow-sm' : 'bg-transparent border-orange-400'}
                                 `}>
-                                    {customerChecked && <Check size={14} className="text-white stroke-[3.5]" />}
+                                    {customerChecked && <Check size={14} className="text-orange-600 stroke-[3.5]" />}
                                 </div>
                                 <div className="flex-1">
-                                    <span className="text-xs font-medium text-slate-900">Customer</span>
+                                    <span className="text-xs font-medium text-white">Customer</span>
                                 </div>
                             </div>
                         </div>

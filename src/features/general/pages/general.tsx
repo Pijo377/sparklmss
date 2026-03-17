@@ -5,6 +5,7 @@ import CollectionAgentQueueConfiguration from "../components/CollectionAgentQueu
 import DashboardMenusConfiguration from "../components/DashboardMenusConfiguration";
 import NotesTopicConfiguration from "../components/NotesTopicConfiguration";
 import TagsConfiguration from "../components/TagsConfiguration";
+import GeneralConfiguration from "../components/GeneralConfiguration";
 
 const General = () => {
     const [activeTab, setActiveTab] = useState("queue-config");
@@ -21,6 +22,8 @@ const General = () => {
                 return <NotesTopicConfiguration />;
             case "tags":
                 return <TagsConfiguration />;
+            case "general-config":
+                return <GeneralConfiguration />;
             default: {
                 const tab = GENERAL_TABS.find(t => t.id === activeTab);
                 return (
